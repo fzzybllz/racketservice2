@@ -4,4 +4,4 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return "This is yet another version!"
+    return "This is yet another staging version!"
