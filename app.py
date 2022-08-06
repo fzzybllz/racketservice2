@@ -1,11 +1,17 @@
-import os
-from flask import Flask
+from flask import Flask, render_template
 
+# Create a Flask Instance
 app = Flask(__name__)
-env_config = os.getenv("APP_SETTINGS", "config.DevelopmentConfig")
-app.config.from_object(env_config)
 
+# Route to Home
 @app.route("/")
-def index():
-    secret_key = app.config.get("SECRET_KEY")
-    return f"The configured secret key is {secret_key}."
+def home():
+    return render_template("home.jinja2")
+
+# Error Page
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.jinja2"), 404
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template("500.jinja2"), 500
