@@ -1,86 +1,56 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
+{% block title %}
+  Signup Form
+{% endblock %}
 {% block content %}
 
+<!-- Check if logged in already -->
 {% if name %}
     <h1>Hello {{ name }}</h1>
 {% else %}
-<div class="form-wrapper">
 
-    {% for message in get_flashed_messages() %}
-      <div class="alert alert-warning">
-        <button
-          type="button"
-          class="close"
-          data-dismiss="alert">
-          x
-        </button>
-        {{ message }}
-      </div>
-    {% endfor %}
+<!-- Form -->
+  <h1>Sign Up</h1>
+  <form method="POST">
+    {{ form.hidden_tag() }}
 
-    <h1>Sign Up</h1>
-
-    <form method="POST" action="/signup">
-      {{ form.hidden_tag() }}
-
-      <fieldset class="name">
-        {{ form.name.label }}
-        {{ form.name(placeholder='Max Mustermann') }}
-        {% if form.name.errors %}
-          <ul class="errors">
-            {% for error in form.email.errors %}
-              <li>{{ error }}</li>{% endfor %}
-          </ul>
-        {% endif %}
-      </fieldset>
-
-      <fieldset class="email">
-        {{ form.email.label }}
-        {{ form.email(placeholder='youremail@example.com') }}
-        {% if form.email.errors %}
-          <ul class="errors">
-            {% for error in form.email.errors %}
-              <li>{{ error }}</li>{% endfor %}
-          </ul>
-        {% endif %}
-      </fieldset>
-
-      <fieldset class="password">
-        {{ form.password.label }}
-        {{ form.password }}
-        {% if form.password.errors %}
-          <ul class="errors">
-            {% for error in form.password.errors %}
-              <li>{{ error }}</li>{% endfor %}
-          </ul>
-        {% endif %}
-      </fieldset>
-
-      <fieldset class="confirm">
-        {{ form.confirm.label }}
-        {{ form.confirm }}
-        {% if form.confirm.errors %}
-          <ul class="errors">
-            {% for error in form.confirm.errors %}
-              <li>{{ error }}</li>{% endfor %}
-          </ul>
-        {% endif %}
-      </fieldset>
-
-      <div class="submit-button">
-        {{ form.submit }}
-      </div>
-
-    </form>
-
-    <div class="login-signup">
-      <div>
+      {{ form.name.label(class="form-label") }}
+      {{ form.name(class="form-control", placeholder='Max Mustermann') }}
+      {% if form.name.errors %}
+          {% for error in form.email.errors %}
+            {{ error }}
+          {% endfor %}
+      {% endif %}
+  <br/>
+      {{ form.email.label(class="form-label") }}
+      {{ form.email(class="form-control", placeholder='youremail@example.com') }}
+      {% if form.email.errors %}
+          {% for error in form.email.errors %}
+            {{ error }}
+          {% endfor %}
+      {% endif %}
+  <br/>
+      {{ form.password.label(class="form-label") }}
+      {{ form.password(class="form-control") }}
+      {% if form.password.errors %}
+          {% for error in form.password.errors %}
+            {{ error }}
+          {% endfor %}
+      {% endif %}
+  <br/>
+      {{ form.confirm.label(class="form-label") }}
+      {{ form.confirm(class="form-control") }}
+      {% if form.confirm.errors %}
+          {% for error in form.confirm.errors %}
+            {{ error }}
+          {% endfor %}
+      {% endif %}
+  <br/>
+      {{ form.submit(class="btn btn-secondary") }}
+  </form>
+  <br/>
         <span>Already have an account?</span>
-        <a href="{{ url_for('auth_bp.login') }}">Log in.</a>
-      </div>
-    </div>
-  </div>
+        <a href="#">Log in.</a>
 
 {% endif %}  
 {% endblock %}

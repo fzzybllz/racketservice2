@@ -28,8 +28,7 @@ def home():
 
 @app.route("/signup", methods=['Get', 'POST'])
 def signup():
-    name = None
-    email = None
+    name = email = password = confirm = None
     form = SignupForm()
     # Validate Form
     if form.validate_on_submit():
