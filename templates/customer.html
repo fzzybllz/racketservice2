@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h2 class="mt-5">Kunden</h2>
+  
+  <table class="table mt-5">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Straße</th>
+            <th scope="col">PLZ</th>
+            <th scope="col">Stadt</th>
+            <th scope="col">eMail</th>
+            <th scope="col">Telefon</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+        <tr class="hoverclick" href="#">
+            <td> {{ customer.lastname }}, {{ customer.firstname }} </td>
+            <td> {{ customer.street }} </td>
+            <td> {{ customer.plz }} </td>
+            <td> {{ customer.city }} </td>
+            <td> {{ customer.mail }} </td>
+            <td> {{ customer.phone }} </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ url_for('add_customer') }}">Kunde hinzufügen</a>
+{% endblock %}
