@@ -6,4 +6,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
+if __name__ == "__main__":
+    app.debug=True
+
 from app import views

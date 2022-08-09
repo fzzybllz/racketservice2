@@ -26,7 +26,7 @@
     <tbody>
       {% for customer in customers %}
         <tr class="hoverclick" href="#">
-            <td> {{ customer.id }} </td>
+            <td> {{ loop.index + pagination.skip }} </td>
             <td> {{ customer.lastname }}, {{ customer.firstname }} </td>
             <td> {{ customer.street }} </td>
             <td> {{ customer.plz }} </td>
@@ -37,6 +37,7 @@
       {% endfor %}
     </tbody>
   </table>
+  {{ pagination.links }}
 
-  <a href="{{ url_for('add_customer') }}">Kunde hinzufügen</a>
+  <a class="btn btn-secondary" role="button" href="{{ url_for('add_customer') }}">Kunde hinzufügen</a>
 {% endblock %}
