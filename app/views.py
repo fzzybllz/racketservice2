@@ -2,21 +2,16 @@ from flask import render_template, flash
 from app import app, db
 from app.models import Customers
 from app.forms import CustomerForm, SignupForm, LoginForm
-from flask_paginate import Pagination, request, get_page_parameter
-
 
 @app.route('/')
 def home():
     return render_template('home.html')
 
-@app.route('/customer', methods=['GET', 'POST'])
-def customer():
-    page = request.args.get(get_page_parameter(), type=int, default=1)
-    customers = Customers.query.order_by(Customers.id).paginate(page, 10, False)
-    pagination = Pagination(page=page, per_page='10', total=customers.count(), record_name='customers', alignment='right', css_framework='bootstrap5')
+@app.route('/customer/<int:page>', methods=['GET', 'POST'])
+def customer(page):
+    customers = Customers.query.order_by(Customers.id).paginate(per_page=10, page=page, error_out=True)
     return render_template('customer.html',
-                            customers = customers,
-                            pagination=pagination)
+                            customers = customers)
 
 @app.route('/customer/add', methods=['GET', 'POST'])
 def add_customer():
