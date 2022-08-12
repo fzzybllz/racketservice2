@@ -12,6 +12,16 @@ class CustomerForm(FlaskForm):
     email = StringField('Email', validators=[Email(message='Enter a valid email')])
     submit = SubmitField('Kunde anlegen')
 
+class RacketForm(FlaskForm):
+    manufacturer = StringField('Hersteller', validators=[DataRequired()])
+    model = StringField('Modell', validators=[DataRequired()])
+    template = StringField('Muster')
+    skips_head = StringField('Skips Head')
+    skips_tail = StringField('Skips Tail')
+    uid = StringField('UID')
+    note = StringField('Notiz')
+    submit = SubmitField('Schläger anlegen')
+
 class SignupForm(FlaskForm):
     firstname = StringField('Vorname', validators=[DataRequired()])
     lastname = StringField('Name', validators=[DataRequired()])

@@ -16,17 +16,17 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Name</th>
-            <th scope="col">Straße</th>
-            <th scope="col">PLZ</th>
-            <th scope="col">Stadt</th>
-            <th scope="col">eMail</th>
-            <th scope="col">Telefon</th>
+            <th scope="col"> {{ form.street.label }} </th>
+            <th scope="col"> {{ form.plz.label }} </th>
+            <th scope="col"> {{ form.city.label }} </th>
+            <th scope="col"> {{ form.email.label }} </th>
+            <th scope="col"> {{ form.phone.label }} </th>
         </tr>
     </thead>
     <tbody>
       {% for customer in customers.items %}
         <tr class="hoverclick" href="#">
-          <td> {{ customer.id }} </td>
+          <td> {{ loop.index + (customers.page-1) * customers.per_page }} </td>
           <td> {{ customer.lastname }}, {{ customer.firstname }} </td>
           <td> {{ customer.street }} </td>
           <td> {{ customer.plz }} </td>
@@ -38,7 +38,7 @@
     </tbody>
   </table>
 
-
+{% if customers.items %}
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-end">
       {% if customers.has_prev %}
@@ -64,6 +64,7 @@
       </li>
     </ul>
   </nav>
+{% endif %}
 
 <a class="btn btn-primary" role="button" href="{{ url_for('add_customer') }}">Kunde hinzufügen</a>
 

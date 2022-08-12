@@ -13,5 +13,12 @@ class Customers(db.Model):
     email = db.Column(db.String(100), unique=True)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __repr__(self):
-        return '<Lastname %r>' % self.lastname
+class Rackets(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    manufacturer = db.Column(db.String, nullable=False)
+    model = db.Column(db.String, nullable=False)
+    template = db.Column(db.String)
+    skips_head = db.Column(db.String)
+    skips_tail = db.Column(db.String)
+    uid = db.Column(db.String)
+    note = db.Column(db.String)
