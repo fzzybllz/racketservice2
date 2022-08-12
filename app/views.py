@@ -1,4 +1,4 @@
-from flask import render_template, flash
+from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.models import Customers, Rackets
 from app.forms import CustomerForm, RacketForm, SignupForm, LoginForm
@@ -7,9 +7,10 @@ from app.forms import CustomerForm, RacketForm, SignupForm, LoginForm
 def home():
     return render_template('home.html')
 
-@app.route('/customer/<int:page>', methods=['GET', 'POST'])
-def customer(page):
-    customers = Customers.query.order_by(Customers.id).paginate(per_page=10, page=page, error_out=True)
+@app.route('/customer', methods=['GET', 'POST'])
+def customer():
+    page = request.args.get('page', 1, type=int)
+    customers = Customers.query.order_by(Customers.id).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
     form = CustomerForm()
     return render_template('customer.html',
                             customers = customers,
@@ -26,15 +27,36 @@ def add_customer():
             db.session.commit()
             form.firstname.data = form.lastname.data = form.street.data = form.plz.data = form.city.data = form.phone.data = form.email.data = '' 
             flash("Kunde erfolgreich angelegt")
+            return redirect(url_for('customer'))
+        else:
+            flash("Kunde ist bereits angelegt")
     return render_template('customer_add.html',
                             form=form)
 
-@app.route('/racket/<int:page>', methods=['GET', 'POST'])
-def racket(page):
-    rackets = Rackets.query.order_by(Rackets.id).paginate(per_page=10, page=page, error_out=True)
+@app.route('/customer/<int:customer_id>')
+def customer_detail(customer_id):
+    customer = Customers.query.filter_by(id=customer_id).first_or_404()
+    form = CustomerForm()
+    return render_template('customer_detail.html',
+                            customer=customer,
+                            form=form)
+
+
+@app.route('/racket', methods=['GET', 'POST'])
+def racket():
+    page = request.args.get('page', 1, type=int)
+    rackets = Rackets.query.order_by(Rackets.id).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
     form = RacketForm()
     return render_template('racket.html',
                             rackets = rackets,
+                            form=form)
+
+@app.route('/racket/<int:racket_id>')
+def racket_detail(racket_id):
+    racket = Rackets.query.filter_by(id=racket_id).first_or_404()
+    form = RacketForm()
+    return render_template('racket_detail.html',
+                            racket=racket,
                             form=form)
 
 @app.route('/racket/add', methods=['GET', 'POST'])
@@ -48,6 +70,9 @@ def add_racket():
             db.session.commit()
             form.manufacturer.data = form.model.data = form.template.data = form.skips_head.data = form.skips_tail.data = form.uid.data = form.note.data = '' 
             flash("Schläger erfolgreich angelegt")
+            return redirect(url_for('racket'))
+        else:
+            flash("Schläger ist bereits angelegt")
     return render_template('racket_add.html',
                             form=form)
 

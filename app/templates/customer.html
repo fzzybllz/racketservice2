@@ -11,7 +11,7 @@
 
 <h2>Kunden</h2>
 
-  <table class="table mt-5">
+  <table class="table mt-5 table-hover">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -25,7 +25,7 @@
     </thead>
     <tbody>
       {% for customer in customers.items %}
-        <tr class="hoverclick" href="#">
+        <tr onclick="window.location='{{ url_for('customer_detail', customer_id=customer.id) }}';">
           <td> {{ loop.index + (customers.page-1) * customers.per_page }} </td>
           <td> {{ customer.lastname }}, {{ customer.firstname }} </td>
           <td> {{ customer.street }} </td>

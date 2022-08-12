@@ -5,3 +5,4 @@ class Config(object):
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///dumme.db'
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://devuser:7aVY2qgou5Dc@ds-server:5433/racketservice-dev'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    POSTS_PER_PAGE = 5
