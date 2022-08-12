@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.models import Customers, Rackets
+from app.models import Customers, Rackets, RacketOwnership
 from app.forms import CustomerForm, RacketForm, CustomerRacketForm, SignupForm, LoginForm
 
 @app.route('/')
@@ -10,7 +10,7 @@ def home():
 @app.route('/customer', methods=['GET', 'POST'])
 def customer():
     page = request.args.get('page', 1, type=int)
-    customers = Customers.query.order_by(Customers.id).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+    customers = Customers.query.order_by(Customers.lastname).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
     form = CustomerForm()
     return render_template('customer.html',
                             customers = customers,
@@ -36,21 +36,22 @@ def add_customer():
 @app.route('/customer/<int:customer_id>', methods=['GET', 'POST'])
 def customer_detail(customer_id):
     customer = Customers.query.filter_by(id=customer_id).first_or_404()
-    customer_racket = customer.has_racket
+    rackets_owned = RacketOwnership.query.filter_by(customers_id=customer_id).all()
     rackets = Rackets.query.all()
     cform = CustomerForm()
     rform = RacketForm()
     crform = CustomerRacketForm()
     if crform.validate_on_submit():
-        r = Rackets.query.filter_by(id=crform.racket_opts.data.id).first()
-        customer.has_racket.append(r)
-        db.session.add(customer)
+        racket = Rackets.query.filter_by(id=crform.racket_opts.data.id).first()
+        ownership = RacketOwnership(customer=customer, racket=racket, uid=crform.uid.data)
+        db.session.add(ownership)
         db.session.commit()
-        crform.racket_opts.data = ''
+        crform.racket_opts.data = crform.uid.data = ''
         flash("Schläger erfolgreich hinzugefügt")
+        return redirect(url_for('customer_detail', customer_id=customer_id))
     return render_template('customer_detail.html',
                             customer=customer,
-                            customer_racket=customer_racket,
+                            rackets_owned=rackets_owned,
                             rackets=rackets,
                             cform=cform,
                             rform=rform,
@@ -80,10 +81,10 @@ def add_racket():
     if form.validate_on_submit():
         racket = Rackets.query.filter_by(model=form.model.data).first()
         if racket is None:
-            racket = Rackets(manufacturer=form.manufacturer.data, model=form.model.data, template=form.template.data, skips_head=form.skips_head.data, skips_tail=form.skips_tail.data, uid=form.uid.data, note=form.note.data)
+            racket = Rackets(manufacturer=form.manufacturer.data, model=form.model.data, template=form.template.data, skips_head=form.skips_head.data, skips_tail=form.skips_tail.data, note=form.note.data)
             db.session.add(racket)
             db.session.commit()
-            form.manufacturer.data = form.model.data = form.template.data = form.skips_head.data = form.skips_tail.data = form.uid.data = form.note.data = '' 
+            form.manufacturer.data = form.model.data = form.template.data = form.skips_head.data = form.skips_tail.data = form.note.data = '' 
             flash("Schläger erfolgreich angelegt")
             return redirect(url_for('racket'))
         else:

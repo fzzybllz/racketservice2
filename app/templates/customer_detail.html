@@ -45,21 +45,15 @@
               <th scope="col"> {{ rform.manufacturer.label }} </th>
               <th scope="col"> {{ rform.model.label }} </th>
               <th scope="col"> {{ rform.template.label }} </th>
-              <th scope="col"> {{ rform.skips_head.label }} </th>
-              <th scope="col"> {{ rform.skips_tail.label }} </th>
-              <th scope="col"> {{ rform.uid.label }} </th>
-              <th scope="col"> {{ rform.note.label }} </th>
+              <th scope="col"> {{ crform.uid.label }} </th>
           </tr>
       </thead>
       <tbody>
-        {% for racket in customer_racket %}
-            <td> {{ racket.manufacturer }}</td>
-            <td> {{ racket.model }} </td>
-            <td> {{ racket.template }} </td>
-            <td> {{ racket.skips_head }} </td>
-            <td> {{ racket.skips_tail }} </td>
+        {% for racket in rackets_owned %}
+            <td> {{ racket.racket.manufacturer }}</td>
+            <td> {{ racket.racket.model }} </td>
+            <td> {{ racket.racket.template }} </td>
             <td> {{ racket.uid }} </td>
-            <td> {{ racket.note }} </td>
           </tr>
         {% endfor %}
       </tbody>
@@ -72,12 +66,14 @@
     <form method="POST">
       <br/>
       {{ crform.hidden_tag() }}
-      {{ crform.racket_opts(class='form-select') }}
-      {% if crform.racket_opts.errors %}
-        {% for error in crform.racket_opts.errors %}
-          {{ error }}
-        {% endfor %}
-      {% endif %}
+      {{ crform.racket_opts(class='form-select' + (' is-invalid' if crform.racket_opts.errors else '')) }}
+        {% if crform.racket_opts.errors %}
+          {% for error in crform.racket_opts.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+      {{ crform.uid.label(class='form-label') }}
+      {{ crform.uid(class ='form-control') }}
       <br/>
       {{ crform.submit(class='btn btn-primary') }}
     </form>

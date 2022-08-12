@@ -20,7 +20,6 @@ class RacketForm(FlaskForm):
     template = StringField('Muster')
     skips_head = StringField('Skips Head')
     skips_tail = StringField('Skips Tail')
-    uid = StringField('UID')
     note = StringField('Notiz')
     submit = SubmitField('Schläger anlegen')
 
@@ -28,7 +27,8 @@ def choice_racket():
     return Rackets.query
 
 class CustomerRacketForm(FlaskForm):
-    racket_opts = QuerySelectField(query_factory=choice_racket, allow_blank=True, get_label='fullracket', blank_text='Schläger auswählen', validators=[InputRequired()])
+    racket_opts = QuerySelectField(query_factory=choice_racket, allow_blank=True, get_label='fullracket', blank_text='Schläger auswählen', validators=[DataRequired()])
+    uid = StringField('UID')
     submit = SubmitField('Schläger hinzufügen')
 
 class SignupForm(FlaskForm):
