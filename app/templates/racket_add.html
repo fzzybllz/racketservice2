@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+
+  <h2 class="mt-5">Schläger anlegen</h2>
+
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+      {{ form.manufacturer.label(class='form-label') }}
+      {{ form.manufacturer(class ='form-control') }}
+      {% if form.manufacturer.errors %}
+              {% for error in form.manufacturer.errors %}
+              {{ error }}
+              {% endfor %}
+      {% endif %}
+
+      {{ form.model.label(class='form-label') }}
+      {{ form.model(class ='form-control') }}
+      {% if form.model.errors %}
+              {% for error in form.model.errors %}
+              {{ error }}
+              {% endfor %}
+      {% endif %}
+
+      {{ form.template.label(class='form-label') }}
+      {{ form.template(class ='form-control') }}
+
+      {{ form.skips_head.label(class='form-label') }}
+      {{ form.skips_head(class ='form-control') }}
+
+      {{ form.skips_tail.label(class='form-label') }}
+      {{ form.skips_tail(class ='form-control') }}
+
+      {{ form.uid.label(class='form-label') }}
+      {{ form.uid(class ='form-control') }}
+
+      {{ form.note.label(class='form-label') }}
+      {{ form.note(class='form-control') }}
+        
+      {{ form.submit(class='btn btn-secondary') }}
+
+  </form>
+
+{% endblock %}
