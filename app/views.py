@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.models import Customers, Rackets
-from app.forms import CustomerForm, RacketForm, SignupForm, LoginForm
+from app.forms import CustomerForm, RacketForm, CustomerRacketForm, SignupForm, LoginForm
 
 @app.route('/')
 def home():
@@ -33,13 +33,28 @@ def add_customer():
     return render_template('customer_add.html',
                             form=form)
 
-@app.route('/customer/<int:customer_id>')
+@app.route('/customer/<int:customer_id>', methods=['GET', 'POST'])
 def customer_detail(customer_id):
     customer = Customers.query.filter_by(id=customer_id).first_or_404()
-    form = CustomerForm()
+    customer_racket = customer.has_racket
+    rackets = Rackets.query.all()
+    cform = CustomerForm()
+    rform = RacketForm()
+    crform = CustomerRacketForm()
+    if crform.validate_on_submit():
+        r = Rackets.query.filter_by(id=crform.racket_opts.data.id).first()
+        customer.has_racket.append(r)
+        db.session.add(customer)
+        db.session.commit()
+        crform.racket_opts.data = ''
+        flash("Schläger erfolgreich hinzugefügt")
     return render_template('customer_detail.html',
                             customer=customer,
-                            form=form)
+                            customer_racket=customer_racket,
+                            rackets=rackets,
+                            cform=cform,
+                            rform=rform,
+                            crform=crform)
 
 
 @app.route('/racket', methods=['GET', 'POST'])

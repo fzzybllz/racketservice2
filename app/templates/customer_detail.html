@@ -1,32 +1,86 @@
 {% extends 'base.html' %}
-
-
 {% block content %}
 
-  <div class="container">
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+
+  <div class="shadow p-3 mb-5 bg-body rounded">
     <h1 class="title">{{ customer.firstname }} {{ customer.lastname }} </h1>
+  </div>
+  <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3>Profil</h3>
     <ul>
       <li>
-        <span class="field-name">{{ form.street.label }}: </span>
+        <span class="field-name">{{ cform.street.label }}: </span>
         <span class="field-value">{{ customer.street }}</span>
       </li>
       <li>
-        <span class="field-name">{{ form.plz.label }}:</span>
+        <span class="field-name">{{ cform.plz.label }}:</span>
         <span class="field-value">{{ customer.plz }}</span>
       </li>
       <li>
-        <span class="field-name">{{ form.city.label }}:</span>
+        <span class="field-name">{{ cform.city.label }}:</span>
         <span class="field-value">{{ customer.city }}</span>
       </li>
       <li>
-        <span class="field-name">{{ form.phone.label }}:</span>
+        <span class="field-name">{{ cform.phone.label }}:</span>
         <span class="field-value">{{ customer.phone }}</span>
       </li>
       <li>
-        <span class="field-name">{{ form.email.label }}:</span>
+        <span class="field-name">{{ cform.email.label }}:</span>
         <span class="field-value">{{ customer.email }}</span>
       </li>
     </ul>
+  </div>
+
+  <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3>Schläger</h3>
+    <table class="table table-hover">
+      <thead>
+          <tr>
+              <th scope="col"> {{ rform.manufacturer.label }} </th>
+              <th scope="col"> {{ rform.model.label }} </th>
+              <th scope="col"> {{ rform.template.label }} </th>
+              <th scope="col"> {{ rform.skips_head.label }} </th>
+              <th scope="col"> {{ rform.skips_tail.label }} </th>
+              <th scope="col"> {{ rform.uid.label }} </th>
+              <th scope="col"> {{ rform.note.label }} </th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for racket in customer_racket %}
+            <td> {{ racket.manufacturer }}</td>
+            <td> {{ racket.model }} </td>
+            <td> {{ racket.template }} </td>
+            <td> {{ racket.skips_head }} </td>
+            <td> {{ racket.skips_tail }} </td>
+            <td> {{ racket.uid }} </td>
+            <td> {{ racket.note }} </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="shadow p-3 mb-5 bg-body rounded">
+    <h3>Schläger hinzufügen</h3>
+
+    <form method="POST">
+      <br/>
+      {{ crform.hidden_tag() }}
+      {{ crform.racket_opts(class='form-select') }}
+      {% if crform.racket_opts.errors %}
+        {% for error in crform.racket_opts.errors %}
+          {{ error }}
+        {% endfor %}
+      {% endif %}
+      <br/>
+      {{ crform.submit(class='btn btn-primary') }}
+    </form>
   </div>
 
 <a class="btn btn-primary" role="button" href="{{ url_for('customer') }}">zurück</a>

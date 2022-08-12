@@ -11,4 +11,4 @@ migrate = Migrate(app, db)
 if __name__ == "__main__":
     app.debug=True
 
-from app import views
+from app import views, models
