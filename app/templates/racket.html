@@ -38,7 +38,7 @@
   </tbody>
 </table>
 
-{% if rackets.items %}
+{% if rackets.total > rackets.per_page %}
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-end">
       {% if rackets.has_prev %}

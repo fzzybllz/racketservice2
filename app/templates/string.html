@@ -21,6 +21,7 @@
           <th scope="col"> {{ form.length.label }} </th>
           <th scope="col"> {{ form.color.label }} </th>
           <th scope="col"> {{ form.structure.label }} </th>
+          <th scope="col"> Verbrauch </th>
           <th scope="col"> {{ form.price.label }} </th>
       </tr>
   </thead>
@@ -34,13 +35,14 @@
         <td> {{ string.length }} m</td>
         <td> {{ string.color }} </td>
         <td> {{ string.structure }} </td>
+        <td> {{ string.consumption }}</td>
         <td> {{ string.price }} €</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
 
-{% if strings.items %}
+{% if strings.total > strings.per_page %}
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-end">
       {% if strings.has_prev %}
