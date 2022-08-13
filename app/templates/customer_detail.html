@@ -39,17 +39,19 @@
 
   <div class="shadow p-3 mb-5 bg-body rounded">
     <h3>Schläger</h3>
+    
     <table class="table table-hover">
       <thead>
-          <tr>
-              <th scope="col"> {{ rform.manufacturer.label }} </th>
-              <th scope="col"> {{ rform.model.label }} </th>
-              <th scope="col"> {{ rform.template.label }} </th>
-              <th scope="col"> {{ crform.uid.label }} </th>
-          </tr>
+        <tr>     
+          <th scope="col"> {{ rform.manufacturer.label }} </th>
+          <th scope="col"> {{ rform.model.label }} </th>
+          <th scope="col"> {{ rform.template.label }} </th>
+          <th scope="col"> {{ crform.uid.label }} </th>
+        </tr>
       </thead>
       <tbody>
         {% for racket in rackets_owned %}
+          <tr onclick="window.location='{{ url_for('racket_detail', racket_id=racket.racket.id) }}';">
             <td> {{ racket.racket.manufacturer }}</td>
             <td> {{ racket.racket.model }} </td>
             <td> {{ racket.racket.template }} </td>

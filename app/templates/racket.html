@@ -11,32 +11,32 @@
 
 <h2>Schläger</h2>
 
-  <table class="table mt-5 table-hover">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col"> {{ form.manufacturer.label }} </th>
-            <th scope="col"> {{ form.model.label }} </th>
-            <th scope="col"> {{ form.template.label }} </th>
-            <th scope="col"> {{ form.skips_head.label }} </th>
-            <th scope="col"> {{ form.skips_tail.label }} </th>
-            <th scope="col"> {{ form.note.label }} </th>
-        </tr>
-    </thead>
-    <tbody>
-      {% for racket in rackets.items %}
-        <tr onclick="window.location='{{ url_for('racket_detail', racket_id=racket.id) }}';">
-          <td> {{ loop.index + (rackets.page-1) * rackets.per_page }} </td>
-          <td> {{ racket.manufacturer }}</td>
-          <td> {{ racket.model }} </td>
-          <td> {{ racket.template }} </td>
-          <td> {{ racket.skips_head }} </td>
-          <td> {{ racket.skips_tail }} </td>
-          <td> {{ racket.note }} </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<table class="table mt-5 table-hover">
+  <thead>
+      <tr>
+          <th scope="col">#</th>
+          <th scope="col"> {{ form.manufacturer.label }} </th>
+          <th scope="col"> {{ form.model.label }} </th>
+          <th scope="col"> {{ form.template.label }} </th>
+          <th scope="col"> {{ form.skips_head.label }} </th>
+          <th scope="col"> {{ form.skips_tail.label }} </th>
+          <th scope="col"> {{ form.note.label }} </th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for racket in rackets.items %}
+      <tr onclick="window.location='{{ url_for('racket_detail', racket_id=racket.id) }}';">
+        <td> {{ loop.index + (rackets.page-1) * rackets.per_page }} </td>
+        <td> {{ racket.manufacturer }}</td>
+        <td> {{ racket.model }} </td>
+        <td> {{ racket.template }} </td>
+        <td> {{ racket.skips_head }} </td>
+        <td> {{ racket.skips_tail }} </td>
+        <td> {{ racket.note }} </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 {% if rackets.items %}
   <nav aria-label="Page navigation">

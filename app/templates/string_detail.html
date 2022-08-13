@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="title">{{ string.manufacturer }} {{ string.model }} </h1>
+  <ul>
+    <li>
+      <span class="field-name">{{ form.gauge.label }}: </span>
+      <span class="field-value">{{ string.gauge }} mm</span>
+    </li>
+    <li>
+      <span class="field-name">{{ form.length.label }}:</span>
+      <span class="field-value">{{ string.length }} m</span>
+    </li>
+    <li>
+      <span class="field-name">{{ form.color.label }}:</span>
+      <span class="field-value">{{ string.color }}</span>
+    </li>
+    <li>
+      <span class="field-name">{{ form.structure.label }}:</span>
+      <span class="field-value">{{ string.structure }}</span>
+    </li>
+    <li>
+      <span class="field-name">{{ form.price.label }}:</span>
+      <span class="field-value">{{ string.price }} €</span>
+    </li>
+  </ul>
+</div>
+
+<a class="btn btn-primary" role="button" href="{{ url_for('string') }}">zurück</a>
+
+{% endblock %}

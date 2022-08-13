@@ -55,3 +55,16 @@ class RacketOwnership(db.Model):
 
     def __repr__(self):
         return f'{self.customers_id} {self.rackets_id}'
+
+class String(db.Model):
+    __tablename__ = 'strings'
+    id = db.Column(db.Integer, primary_key=True)
+    manufacturer = db.Column(db.String(20), nullable=False)
+    model = db.Column(db.String(50), nullable=False)
+    gauge = db.Column(db.String(10), nullable=False)
+    length = db.Column(db.String(3))
+    color = db.Column(db.String(10))
+    structure = db.Column(db.String(20))
+    price = db.Column(db.String(10))
+    consumption = db.Column(db.String(5))
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)

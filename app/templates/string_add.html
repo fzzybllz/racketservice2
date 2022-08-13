@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+
+  <h2 class="mt-5">Saite anlegen</h2>
+
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.manufacturer.label(class='form-label') }} <span class="text-danger">*</span>
+    {{ form.manufacturer(class='form-control' + (' is-invalid' if form.manufacturer.errors else '')) }}
+      {% if form.manufacturer.errors %}
+        {% for error in form.manufacturer.errors %}
+           <div class="invalid-feedback">
+            {{ error }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+    {{ form.model.label(class='form-label') }} <span class="text-danger">*</span>
+    {{ form.model(class='form-control' + (' is-invalid' if form.model.errors else '')) }}
+      {% if form.model.errors %}
+        {% for error in form.model.errors %}
+           <div class="invalid-feedback">
+            {{ error }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+    {{ form.gauge.label(class='form-label') }} <span class="text-danger">*</span>
+    {{ form.gauge(class='form-control' + (' is-invalid' if form.gauge.errors else '')) }}
+      {% if form.gauge.errors %}
+        {% for error in form.gauge.errors %}
+           <div class="invalid-feedback">
+            {{ error }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+    {{ form.length.label(class='form-label') }}
+    {{ form.length(class ='form-control') }}
+
+    {{ form.color.label(class='form-label') }}
+    {{ form.color(class ='form-control') }}
+
+    {{ form.structure.label(class='form-label') }}
+    {{ form.structure(class ='form-control') }}
+
+    {{ form.price.label(class='form-label') }}
+    {{ form.price(class='form-control') }}
+      
+      <br/>
+      {{ form.submit(class='btn btn-primary') }}
+  </form>
+
+{% endblock %}

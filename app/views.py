@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.models import Customers, Rackets, RacketOwnership
-from app.forms import CustomerForm, RacketForm, CustomerRacketForm, SignupForm, LoginForm
+from app.models import Customers, Rackets, RacketOwnership, String
+from app.forms import CustomerForm, RacketForm, CustomerRacketForm, StringForm, SignupForm, LoginForm
 
 @app.route('/')
 def home():
@@ -90,6 +90,46 @@ def add_racket():
         else:
             flash("Schläger ist bereits angelegt")
     return render_template('racket_add.html',
+                            form=form)
+
+@app.route('/string', methods=['GET', 'POST'])
+def string():
+    page = request.args.get('page', 1, type=int)
+    strings = String.query.order_by(String.id).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+    form = StringForm()
+    return render_template('string.html',
+                            strings = strings,
+                            form=form)
+
+@app.route('/string/<int:string_id>')
+def string_detail(string_id):
+    string = String.query.filter_by(id=string_id).first_or_404()
+    form = StringForm()
+    return render_template('string_detail.html',
+                            string=string,
+                            form=form)
+
+@app.route('/string/add', methods=['GET', 'POST'])
+def add_string():
+    form = StringForm()
+    if form.validate_on_submit():
+        string = String.query.filter_by(model=form.model.data).first()
+        if string is None:
+            string = String(manufacturer=form.manufacturer.data,
+                            model=form.model.data,
+                            gauge=form.gauge.data,
+                            length=form.length.data,
+                            color=form.color.data,
+                            structure=form.structure.data,
+                            price=form.price.data)
+            db.session.add(string)
+            db.session.commit()
+            form.manufacturer.data = form.model.data = form.gauge.data = form.length.data = form.color.data = form.structure.data = form.price.data = '' 
+            flash("Saite erfolgreich angelegt")
+            return redirect(url_for('string'))
+        else:
+            flash("Saite ist bereits angelegt")
+    return render_template('string_add.html',
                             form=form)
 
 @app.route('/signup', methods=['Get', 'POST'])

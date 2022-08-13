@@ -31,6 +31,16 @@ class CustomerRacketForm(FlaskForm):
     uid = StringField('UID')
     submit = SubmitField('Schläger hinzufügen')
 
+class StringForm(FlaskForm):
+    manufacturer = StringField('Hersteller', validators=[InputRequired()])
+    model = StringField('Modell', validators=[InputRequired()])
+    gauge = StringField('Saitenstärke', validators=[InputRequired()])
+    length = StringField('Länge')
+    color = StringField('Farbe')
+    structure = StringField('Typ')
+    price = StringField('Preis')
+    submit = SubmitField('Saite hinzufügen')
+
 class SignupForm(FlaskForm):
     firstname = StringField('Vorname', validators=[InputRequired()])
     lastname = StringField('Name', validators=[InputRequired()])
