@@ -2,3 +2,5 @@
 /.venv
 .vscode/launch.json
 **/*.db
+.DS_Store
+**/.DS_Store
