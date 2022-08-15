@@ -1,5 +1,5 @@
-from flask import render_template, flash, redirect, url_for, request
 from app import app, db
+from flask import render_template, flash, redirect, url_for, request
 from app.models import Customers, Rackets, RacketOwnership, String
 from app.forms import CustomerForm, RacketForm, CustomerRacketForm, StringForm, SignupForm, LoginForm
 

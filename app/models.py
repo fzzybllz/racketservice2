@@ -1,14 +1,6 @@
 from app import db
 from datetime import datetime
 
-# customer_racket = db.Table('customer_racket',
-#     db.Column('id', db.Integer, primary_key=True),
-#     db.Column('customers_id', db.Integer, db.ForeignKey('customers.id')),
-#     db.Column('rackets_id', db.Integer, db.ForeignKey('rackets.id')),
-#     db.Column('uid', db.String),
-#     db.Column('date_added', db.DateTime, default=datetime.utcnow)
-# )
-
 class Customers(db.Model):
     __tablename__ = 'customers'
     id = db.Column(db.Integer, primary_key=True)
