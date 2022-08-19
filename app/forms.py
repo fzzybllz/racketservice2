@@ -1,17 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import (DataRequired, InputRequired, Email, EqualTo, Length, Optional)
+from wtforms import StringField, PasswordField, SelectField, SubmitField
+from wtforms.validators import DataRequired, InputRequired, Email, EqualTo, Length, NoneOf, Optional, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
-from app.models import Rackets
+from app.models import Rackets, Customers, RacketOwnership
 
 class CustomerForm(FlaskForm):
-    firstname = StringField('Vorname', validators=[InputRequired()])
-    lastname = StringField('Nachname', validators=[InputRequired()])
+    firstname = StringField('Vorname', validators=[InputRequired(message='Pflichtfeld')])
+    lastname = StringField('Nachname', validators=[InputRequired(message='Pflichtfeld')])
     street = StringField('Strasse')
     plz = StringField('Postleitzahl')
     city = StringField('Stadt')
     phone = StringField('Telefon')
-    email = StringField('Email', validators=[InputRequired(), Email(message='Enter a valid email')])
+    email = StringField('Email', validators=[InputRequired(message='Pflichtfeld'), Email(message='eMail ist ungültig')])
     submit = SubmitField('Kunde anlegen')
 
 class RacketForm(FlaskForm):
@@ -27,7 +27,11 @@ def choice_racket():
     return Rackets.query
 
 class CustomerRacketForm(FlaskForm):
-    racket_opts = QuerySelectField(query_factory=choice_racket, allow_blank=True, get_label='fullracket', blank_text='Schläger auswählen', validators=[DataRequired()])
+    racket_opts = QuerySelectField(query_factory=choice_racket,
+                                   allow_blank=True, 
+                                   get_label='fullracket', 
+                                   blank_text='Schläger auswählen', 
+                                   validators=[InputRequired()])
     uid = StringField('UID')
     submit = SubmitField('Schläger hinzufügen')
 
@@ -40,6 +44,21 @@ class StringForm(FlaskForm):
     structure = StringField('Typ')
     price = StringField('Preis')
     submit = SubmitField('Saite hinzufügen')
+
+def choice_customer():
+    return Customers.query
+
+class OrderForm(FlaskForm):
+    customer_opts = QuerySelectField(query_factory=choice_customer, allow_blank=True, get_label='fullname', blank_text='Kunde auswählen')
+    customer_rackets_opts = SelectField('racket', choices=[], coerce=int)
+    #customer_rackets_opts = QuerySelectField(allow_blank=True, blank_text='Schläger auswählen')
+    tension_main = StringField('Längs', validators=[InputRequired()])
+    tension_cross = StringField('Quer', validators=[InputRequired()])
+    submit = SubmitField('Auftrag hinzufügen')
+
+    def validate_customer_rackets_opts(form, customer_rackets_opts):
+        if customer_rackets_opts.data is None or -1:
+            raise ValidationError('Fehler88')
 
 class SignupForm(FlaskForm):
     firstname = StringField('Vorname', validators=[InputRequired()])

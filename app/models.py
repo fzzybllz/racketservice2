@@ -11,8 +11,10 @@ class Customers(db.Model):
     city = db.Column(db.String(100))
     phone = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    has_racket = db.relationship('Rackets', secondary='racket_ownerships', backref='owned_by')
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+    #has_racket = db.relationship('Rackets', secondary='racket_ownerships', backref='owned_by') # <- Circular relation
+    # Virtual Helper Column
+    fullname = db.column_property(lastname + ", " + firstname)
 
     def __repr__(self):
         return f'{self.firstname} {self.lastname}>'
@@ -26,9 +28,10 @@ class Rackets(db.Model):
     skips_head = db.Column(db.String)
     skips_tail = db.Column(db.String)
     note = db.Column(db.String)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+    # Virtual Helper Column
     fullracket = db.column_property(manufacturer + " " + model + " " + template)
-#    owned_by = db.relationship('CustomerRacket', back_populates='customers')
+#    owned_by = db.relationship('CustomerRacket', back_populates='customers') # <- Circular relation
 
     def __repr__(self):
         return f'{self.manufacturer} {self.model}'
@@ -38,15 +41,14 @@ class RacketOwnership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customers_id = db.Column(db.Integer, db.ForeignKey(Customers.id))
     rackets_id = db.Column(db.Integer, db.ForeignKey(Rackets.id))
-
     racket = db.relationship('Rackets', backref='racket_ownerships')
     customer = db.relationship('Customers', backref='racket_ownerships')
-
     uid = db.Column(db.String)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+    in_order = db.relationship('Order', backref='belongs_to')
 
     def __repr__(self):
-        return f'{self.customers_id} {self.rackets_id}'
+        return f'{self.racket.manufacturer} {self.racket.model} {self.racket.template} ({self.uid})'
 
 class String(db.Model):
     __tablename__ = 'strings'
@@ -59,4 +61,15 @@ class String(db.Model):
     structure = db.Column(db.String(20))
     price = db.Column(db.String(10))
     consumption = db.Column(db.String(5))
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+    id = db.Column(db.Integer, primary_key=True)
+    ownership_id = db.Column(db.Integer, db.ForeignKey('racket_ownerships.id'))
+#   string_id = db.Column(db.Integer, Foreignkey('string.id'))
+    tension_main = db.Column(db.String(5), nullable=False)
+    tension_cross = db.Column(db.String(5), nullable=False)
+    paid = db.Column(db.Boolean(), default=False)
+    done = db.Column(db.Boolean(), default=False)
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)

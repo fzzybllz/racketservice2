@@ -1,7 +1,8 @@
 from app import app, db
-from flask import render_template, flash, redirect, url_for, request
-from app.models import Customers, Rackets, RacketOwnership, String
-from app.forms import CustomerForm, RacketForm, CustomerRacketForm, StringForm, SignupForm, LoginForm
+from flask import render_template, flash, redirect, url_for, request, jsonify
+from sqlalchemy import desc
+from app.models import Customers, Rackets, RacketOwnership, String, Order
+from app.forms import CustomerForm, RacketForm, CustomerRacketForm, StringForm, OrderForm, SignupForm, LoginForm, ValidationError
 
 @app.route('/')
 def home():
@@ -22,7 +23,13 @@ def add_customer():
     if form.validate_on_submit():
         customer = Customers.query.filter_by(email=form.email.data).first()
         if customer is None:
-            customer = Customers(firstname=form.firstname.data, lastname=form.lastname.data, street=form.street.data, plz=form.plz.data, city=form.city.data, phone=form.phone.data, email=form.email.data)
+            customer = Customers(firstname=form.firstname.data,
+                                 lastname=form.lastname.data,
+                                 street=form.street.data,
+                                 plz=form.plz.data,
+                                 city=form.city.data,
+                                 phone=form.phone.data,
+                                 email=form.email.data)
             db.session.add(customer)
             db.session.commit()
             form.firstname.data = form.lastname.data = form.street.data = form.plz.data = form.city.data = form.phone.data = form.email.data = '' 
@@ -81,7 +88,12 @@ def add_racket():
     if form.validate_on_submit():
         racket = Rackets.query.filter_by(model=form.model.data).first()
         if racket is None:
-            racket = Rackets(manufacturer=form.manufacturer.data, model=form.model.data, template=form.template.data, skips_head=form.skips_head.data, skips_tail=form.skips_tail.data, note=form.note.data)
+            racket = Rackets(manufacturer=form.manufacturer.data, 
+                             model=form.model.data,
+                             template=form.template.data, 
+                             skips_head=form.skips_head.data,
+                             skips_tail=form.skips_tail.data,
+                             note=form.note.data)
             db.session.add(racket)
             db.session.commit()
             form.manufacturer.data = form.model.data = form.template.data = form.skips_head.data = form.skips_tail.data = form.note.data = '' 
@@ -131,6 +143,43 @@ def add_string():
             flash("Saite ist bereits angelegt")
     return render_template('string_add.html',
                             form=form)
+
+@app.route('/order', methods=['GET', 'POST'])
+def order():
+    page = request.args.get('page', 1, type=int)
+    orders = Order.query.order_by(desc(Order.date_added)).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+    return render_template('order.html',
+                            orders = orders)
+
+@app.route('/order/add', methods=['GET', 'POST'])
+def add_order():
+    form = OrderForm()
+    form.customer_rackets_opts.choices = [('-1', 'Schläger auswählen')]
+#    form.customer_rackets_opts.choices = [(rackets.id, rackets.racket.fullracket) for rackets in RacketOwnership.query.filter_by(customers_id=None).all()]
+    if request.method == 'POST':
+        ownership = form.customer_rackets_opts.data
+        # order = Order(ownership_id=ownership, tension_main=form.tension_main.data, tension_cross=form.tension_main.data)
+        # db.session.add(order)
+        # db.session.commit()
+        # form.customer_opts.data = form.customer_rackets_opts.data = form.tension_main.data = form.tension_main.data = '' 
+        flash(ownership)
+        #return redirect(url_for('order'))
+    return render_template('order_add.html', form=form)
+
+@app.route('/customer/racket/<id>')
+def racketSelection(id):
+    ownership = RacketOwnership.query.filter_by(customers_id=id).all()
+    racketArray = []
+    for racket in ownership:
+        racketObj = {}
+        racketObj['id'] = racket.id
+        racketObj['manufacturer'] = racket.racket.manufacturer
+        racketObj['model'] = racket.racket.model
+        racketObj['uid'] = racket.uid
+        racketArray.append(racketObj)
+    return jsonify({'rackets' : racketArray})
+
+### Login ###
 
 @app.route('/signup', methods=['Get', 'POST'])
 def signup():

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+
+<div class="shadow p-3 mb-5 bg-body rounded">
+<h3>Auftrag hinzufügen</h3>
+
+<form method="POST">
+  <br/>
+  {{ form.csrf_token }}
+
+	{{ form.customer_opts(class='form-select' + (' is-invalid' if form.customer_opts.errors else '')) }}
+	{% if form.customer_opts.errors %}
+	  	{% for error in form.customer_opts.errors %}
+	    	<div class="invalid-feedback">{{ error }}</div>
+	  	{% endfor %}
+	{% endif %}
+<br/>
+  {{ form.customer_rackets_opts(class='form-select' + (' is-invalid' if form.customer_rackets_opts.errors else '')) }}
+    {% if form.customer_rackets_opts.errors %}
+      {% for error in form.customer_rackets_opts.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    {% endif %}
+
+	<div class="row">
+	  <div class="col">
+		  {{ form.tension_main.label(class='form-label') }}
+		  <div class="input-group">
+		  {{ form.tension_main(class ='form-control' + (' is-invalid' if form.tension_main.errors else '')) }}
+		  <span class="input-group-text">kg</span>
+		 	</div>		  		    
+		    {% if form.tension_main.errors %}
+		      {% for error in form.tension_main.errors %}
+		        <div class="invalid-feedback">{{ error }}</div>
+		      {% endfor %}
+		    {% endif %}
+		</div>
+		<div class="col">
+		  {{ form.tension_cross.label(class='form-label') }}
+		  <div class="input-group">
+		  {{ form.tension_cross(class='form-control' + (' is-invalid' if form.tension_cross.errors else '')) }}
+		  <span class="input-group-text">kg</span>
+		 	</div>
+		    {% if form.tension_cross.errors %}
+		      {% for error in form.tension_cross.errors %}
+		        <div class="invalid-feedback">{{ error }}</div>
+		      {% endfor %}
+		    {% endif %}
+		</div>
+	</div>
+	
+  {{ form.submit(class='btn btn-primary') }}
+
+</form>
+</div>
+
+<script>
+	let customer_select = document.getElementById('customer_opts');
+	let racket_select = document.getElementById('customer_rackets_opts');
+
+	customer_select.onchange = function() {
+		customer = customer_select.value;
+
+		fetch('/customer/racket/' + customer).then(function(response) {
+			response.json().then(function(data) {
+				let optionHTML = '<option selected="" value="__None">Schläger auswählen</option>';
+				for (let racket of data.rackets) {
+					optionHTML += '<option value="' + racket.id + '">'+racket.manufacturer+' '+racket.model+' ('+racket.uid+')'+'</option>';
+				}
+				racket_select.innerHTML = optionHTML;
+			});
+		});
+	}
+</script>
+
+{% endblock %}

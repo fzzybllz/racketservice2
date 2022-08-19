@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+
+<h2>Aufträge</h2>
+
+  <table class="table mt-5 table-hover">
+    <thead>
+        <tr>
+            <th scope="col"> # </th>
+            <th scope="col"> Kunde </th>
+            <th scope="col"> Schläger </th>
+            <th scope="col"> Längs </th>
+            <th scope="col"> Quer </th>
+            <th scope="col"> Erledigt </th>
+            <th scope="col"> Aktion </th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for order in orders.items %}
+          <td> {{ loop.index + (orders.page-1) * orders.per_page }} </td>
+          <td> {{ order.belongs_to.customer.fullname }} </td>
+          <td> {{ order.belongs_to }} </td>
+          <td> {{ order.tension_main }} </td>
+          <td> {{ order.tension_main }} </td>
+          <td> {{ order.done }} </td>
+          <td> Aktion </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% if orders.total > orders.per_page %}
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-end">
+      {% if orders.has_prev %}
+        <li class="page-item">
+      {% else %}
+        <li class="page-item disabled">
+      {% endif %}
+        <a class="page-link" href="{{ url_for('order', page=orders.page-1) }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {% for page in orders.iter_pages() %}
+      <li class="page-item"><a class="page-link" href="{{ url_for('order', page=page) }}"> {{ page }}</a></li>
+      {% endfor %}
+      {% if orders.has_next %}
+        <li class="page-item">
+      {% else %}
+        <li class="page-item disabled">
+      {% endif %}
+        <a class="page-link" href="{{ url_for('order', page=orders.page+1) }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+
+<a class="btn btn-primary" role="button" href="{{ url_for('add_order') }}">Auftrag hinzufügen</a>
+
+{% endblock %}
