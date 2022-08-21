@@ -62,12 +62,18 @@ class String(db.Model):
     price = db.Column(db.String(10))
     consumption = db.Column(db.String(5))
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+    # Virtual Helper Column
+    fullstring = db.column_property(manufacturer + " " + model + " " + gauge)
 
 class Order(db.Model):
     __tablename__ = 'orders'
     id = db.Column(db.Integer, primary_key=True)
     ownership_id = db.Column(db.Integer, db.ForeignKey('racket_ownerships.id'))
-#   string_id = db.Column(db.Integer, Foreignkey('string.id'))
+    hybrid = db.Column(db.Boolean())
+    string_main_id = db.Column(db.Integer, db.ForeignKey('strings.id'))
+    string_cross_id = db.Column(db.Integer, db.ForeignKey('strings.id'))
+    string_main = db.relationship('String', foreign_keys=[string_main_id])
+    string_cross = db.relationship('String', foreign_keys=[string_cross_id])
     tension_main = db.Column(db.String(5), nullable=False)
     tension_cross = db.Column(db.String(5), nullable=False)
     paid = db.Column(db.Boolean(), default=False)

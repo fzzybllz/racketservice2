@@ -1,5 +1,6 @@
 from app import app, db
 from flask import render_template, flash, redirect, url_for, request, jsonify
+import babel
 from sqlalchemy import desc
 from app.models import Customers, Rackets, RacketOwnership, String, Order
 from app.forms import CustomerForm, RacketForm, CustomerRacketForm, StringForm, OrderForm, SignupForm, LoginForm, ValidationError
@@ -154,16 +155,15 @@ def order():
 @app.route('/order/add', methods=['GET', 'POST'])
 def add_order():
     form = OrderForm()
-    form.customer_rackets_opts.choices = [('-1', 'Schläger auswählen')]
-#    form.customer_rackets_opts.choices = [(rackets.id, rackets.racket.fullracket) for rackets in RacketOwnership.query.filter_by(customers_id=None).all()]
-    if request.method == 'POST':
+    form.customer_rackets_opts.choices = [('-1', 'Zuerst Kunde wählen...')]
+    if form.validate_on_submit():
         ownership = form.customer_rackets_opts.data
-        # order = Order(ownership_id=ownership, tension_main=form.tension_main.data, tension_cross=form.tension_main.data)
-        # db.session.add(order)
-        # db.session.commit()
-        # form.customer_opts.data = form.customer_rackets_opts.data = form.tension_main.data = form.tension_main.data = '' 
-        flash(ownership)
-        #return redirect(url_for('order'))
+        order = Order(ownership_id=ownership, hybrid=form.hybrid.data, string_main=form.string_main.data, string_cross=form.string_cross.data, tension_main=form.tension_main.data, tension_cross=form.tension_main.data)
+        db.session.add(order)
+        db.session.commit()
+        form.customer_opts.data = form.customer_rackets_opts.data = form.tension_main.data = form.tension_main.data = '' 
+        flash('Auftrag erfolgreich hinzugefügt')
+        return redirect(url_for('order'))
     return render_template('order_add.html', form=form)
 
 @app.route('/customer/racket/<id>')
@@ -214,3 +214,22 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("500.html"), 500
+
+### Formatting Datetimes with form.field|format_datetime('short/long') 
+@app.template_filter()
+def format_datetime(value, format='short'):
+    if format == 'long':
+        format="EEEE, d. MMMM y '-' HH:mm"
+    elif format == 'short':
+        format="EE dd.MM.y"
+    return babel.dates.format_datetime(value, format)
+    
+@app.template_filter()
+def format_bool(value):
+    if value is True:
+        new_val="Ja"
+    elif value is False:
+        new_val="Nein"
+    elif value is None:
+        new_val=""
+    return new_val

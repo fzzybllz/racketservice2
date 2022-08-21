@@ -5,17 +5,14 @@ basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, '.env'))
 
 class Config:
-    FLASK_APP = environ.get("FLASK_APP")
-    SECRET_KEY = environ.get('SECRET_KEY')
-#    SESSION_COOKIE_NAME = environ.get('SESSION_COOKIE_NAME')
-    STATIC_FOLDER = 'static'
-    TEMPLATES_FOLDER = 'templates'
-    FLASK_DEBUG = 1
-    DEBUG = True
-    TESTING = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    FLASK_APP=environ.get("FLASK_APP")
+    SECRET_KEY=environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')
-    POSTS_PER_PAGE = 5
+#    SESSION_COOKIE_NAME = environ.get('SESSION_COOKIE_NAME')
+    STATIC_FOLDER='static'
+    TEMPLATES_FOLDER='templates'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    POSTS_PER_PAGE=5
 
 class ProdConfig(Config):
     FLASK_DEBUG = 0
