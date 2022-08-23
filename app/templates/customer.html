@@ -25,7 +25,7 @@
     </thead>
     <tbody>
       {% for customer in customers.items %}
-        <tr onclick="window.location='{{ url_for('customer_detail', customer_id=customer.id) }}';">
+        <tr onclick="window.location='{{url_for('customer_detail', customer_id=customer.id)}}';">
           <td> {{ loop.index + (customers.page-1) * customers.per_page }} </td>
           <td> {{ customer.lastname }}, {{ customer.firstname }} </td>
           <td> {{ customer.street }} </td>
@@ -65,7 +65,5 @@
     </ul>
   </nav>
 {% endif %}
-
-<a class="btn btn-primary" role="button" href="{{ url_for('add_customer') }}">Kunde hinzufügen</a>
 
 {% endblock %}

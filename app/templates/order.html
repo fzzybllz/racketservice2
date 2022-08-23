@@ -9,72 +9,75 @@
   </div>
 {% endfor %}
 
-<div class="shadow p-3 mb-5 bg-body rounded">
-  <h2>Offene Aufträge</h2>
+<h2>Offene Aufträge</h2>
 
-  <table class="table mt-5 table-hover">
-    <thead>
-        <tr>
-            <th scope="col"> Datum </th>
-            <th scope="col"> Kunde </th>
-            <th scope="col"> Schläger </th>
-            <th scope="col"> Hybrid </th>
-            <th scope="col"> Saite </th>
-            <th scope="col"> Längs(kg) </th>
-            <th scope="col"> Quer(kg) </th>
-            <th scope="col"> Erledigt </th>
-            <th scope="col"> Aktion </th>
-        </tr>
-    </thead>
-    <tbody>
-      {% for order in orders.items %}
-          <td> {{ order.date_added|format_datetime }} </td>
-          <td> {{ order.belongs_to.customer.fullname }} </td>
-          <td> {{ order.belongs_to }} </td>
-          <td> {{ order.hybrid|format_bool }} </td>
-          <td> 
-            {% if order.hybrid is true %}
-            {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
-            {% else %}
-            {{ order.string_main.fullstring }}
-            {% endif %}
-          </td>
-          <td> {{ order.tension_main }} </td>
-          <td> {{ order.tension_main }} </td>
-          <td> {{ order.done|format_bool }} </td>
-          <td> Aktion </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<table class="table mt-5 table-hover">
+  <thead>
+      <tr>
+          <th scope="col"> Datum </th>
+          <th scope="col"> Kunde </th>
+          <th scope="col"> Schläger </th>
+          <th scope="col"> Saite </th>
+          <th scope="col"> Längs </th>
+          <th scope="col"> Quer </th>
+          <th scope="col"> Aktion </th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for order in open_orders %}
+        <td> {{ order.date_added|format_datetime }} </td>
+        <td> {{ order.belongs_to.customer.fullname }} </td>
+        <td> {{ order.belongs_to }} </td>
+        <td> 
+          {% if order.hybrid is true %}
+          {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
+          {% else %}
+          {{ order.string_main.fullstring }}
+          {% endif %}
+        </td>
+        <td> {{ order.tension_main }} kg </td>
+        <td> {{ order.tension_main }} kg </td>
+        <td> 
+          <div class="btn-group" role="group">
+            <button class="btn btn-success"><a href="{{ url_for('updateDone', id=order.id) }}" class="link-light"><i class="bi bi-check-circle"></i></a></button>
+            <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  
+<h2>Abgeschlossene Aufträge</h2>
 
-  {% if orders.total > orders.per_page %}
-    <nav aria-label="Page navigation">
-      <ul class="pagination justify-content-end">
-        {% if orders.has_prev %}
-          <li class="page-item">
-        {% else %}
-          <li class="page-item disabled">
-        {% endif %}
-          <a class="page-link" href="{{ url_for('order', page=orders.page-1) }}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        {% for page in orders.iter_pages() %}
-        <li class="page-item"><a class="page-link" href="{{ url_for('order', page=page) }}"> {{ page }}</a></li>
-        {% endfor %}
-        {% if orders.has_next %}
-          <li class="page-item">
-        {% else %}
-          <li class="page-item disabled">
-        {% endif %}
-          <a class="page-link" href="{{ url_for('order', page=orders.page+1) }}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  {% endif %}
-  <a class="btn btn-primary" role="button" href="{{ url_for('add_order') }}">Auftrag hinzufügen</a>
-</div>
+<table class="table mt-5 table-hover">
+  <thead>
+      <tr>
+          <th scope="col"> Datum </th>
+          <th scope="col"> Kunde </th>
+          <th scope="col"> Schläger </th>
+          <th scope="col"> Saite </th>
+          <th scope="col"> Längs </th>
+          <th scope="col"> Quer </th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+        <td> {{ order.date_added|format_datetime }} </td>
+        <td> {{ order.belongs_to.customer.fullname }} </td>
+        <td> {{ order.belongs_to }} </td>
+        <td> 
+          {% if order.hybrid is true %}
+          {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
+          {% else %}
+          {{ order.string_main.fullstring }}
+          {% endif %}
+        </td>
+        <td> {{ order.tension_main }} kg </td>
+        <td> {{ order.tension_main }} kg </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}

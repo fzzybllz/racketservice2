@@ -147,9 +147,10 @@ def add_string():
 
 @app.route('/order', methods=['GET', 'POST'])
 def order():
-    page = request.args.get('page', 1, type=int)
-    orders = Order.query.order_by(desc(Order.date_added)).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+    open_orders = Order.query.filter_by(done=False).order_by(desc(Order.date_added))
+    orders = Order.query.filter_by(done=True).order_by(desc(Order.date_added))
     return render_template('order.html',
+                            open_orders = open_orders,
                             orders = orders)
 
 @app.route('/order/add', methods=['GET', 'POST'])
@@ -166,6 +167,7 @@ def add_order():
         return redirect(url_for('order'))
     return render_template('order_add.html', form=form)
 
+## Helper Route to fill the order_add form
 @app.route('/customer/racket/<id>')
 def racketSelection(id):
     ownership = RacketOwnership.query.filter_by(customers_id=id).all()
@@ -178,6 +180,13 @@ def racketSelection(id):
         racketObj['uid'] = racket.uid
         racketArray.append(racketObj)
     return jsonify({'rackets' : racketArray})
+
+@app.route('/order/done/<int:id>')
+def updateDone(id):
+    order_to_update = Order.query.get_or_404(id)
+    order_to_update.done = True
+    db.session.commit()
+    return redirect(url_for('order'))
 
 ### Login ###
 

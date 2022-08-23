@@ -63,7 +63,7 @@ class String(db.Model):
     consumption = db.Column(db.String(5))
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
     # Virtual Helper Column
-    fullstring = db.column_property(manufacturer + " " + model + " " + gauge)
+    fullstring = db.column_property(manufacturer + " " + model + " " + "(" + gauge + "mm)")
 
 class Order(db.Model):
     __tablename__ = 'orders'

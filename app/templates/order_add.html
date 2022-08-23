@@ -1,113 +1,99 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>{{ message }}</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-{% endfor %}
-
-<div class="shadow p-3 mb-5 bg-body rounded">
 <h3>Auftrag hinzufügen</h3>
 
 <form method="POST" novalidate>
+{{ form.csrf_token }}
+	{% if form.csrf_token.errors %}
+		{% for error in form.csrf_token.errors %}
+			{{ error }}
+		{% endfor %}
+	{% endif %}
 
-	{{ form.csrf_token }}
-		{% if form.csrf_token.errors %}
-			{% for error in form.csrf_token.errors %}
-				{{ error }}
-			{% endfor %}
-		{% endif %}
-
-	<div class="mb-3 row">
-		<div class="col">
-			{{ form.customer_opts.label(class='form-label') }} <span class="text-danger">*</span>
-			{{ form.customer_opts(class='form-select' + (' is-invalid' if form.customer_opts.errors else '')) }}
-				{% if form.customer_opts.errors %}
-					{% for error in form.customer_opts.errors %}
-						<div class="invalid-feedback">{{ error }}</div>
-					{% endfor %}
-				{% endif %}
-		</div>
-		<div class="col">
-			{{ form.customer_rackets_opts.label(class='form-label') }} <span class="text-danger">*</span>
-			{{ form.customer_rackets_opts(disabled=True, class='form-select' + (' is-invalid' if form.customer_rackets_opts.errors else '')) }}
-				{% if form.customer_rackets_opts.errors %}
-					<div class="invalid-feedback">
-						{% for error in form.customer_rackets_opts.errors %}
-							{{ error }}
-						{% endfor %}
-					</div>
-				{% endif %}
-		</div>
+<div class="mb-3 row">
+	<div class="col">
+		{{ form.customer_opts.label(class='form-label') }} <span class="text-danger">*</span>
+		{{ form.customer_opts(class='form-select' + (' is-invalid' if form.customer_opts.errors else '')) }}
+			{% if form.customer_opts.errors %}
+				{% for error in form.customer_opts.errors %}
+					<div class="invalid-feedback">{{ error }}</div>
+				{% endfor %}
+			{% endif %}
 	</div>
-
-	<div class="mb-3 row">
-		<div class="col">
-			{{ form.hybrid.label(class='form-label') }}
-			{{ form.hybrid(class='form-select' + (' is-invalid' if form.hybrid.errors else '')) }}
-				{% if form.hybrid.errors %}
-					{% for error in form.hybrid.errors %}
-						<div class="invalid-feedback">{{ error }}</div>
-					{% endfor %}
-				{% endif %}
-		</div>
-		<div class="col">
-			{{ form.string_main.label(class='form-label') }} <span class="text-danger">*</span>
-			{{ form.string_main(class='form-select' + (' is-invalid' if form.string_main.errors else '')) }}
-				{% if form.string_main.errors %}
-					<div class="invalid-feedback">
-						{% for error in form.string_main.errors %}
-							{{ error }}
-						{% endfor %}
-					</div>
-				{% endif %}
-		</div>
-		<div class="col">
-			{{ form.string_cross.label(class='form-label') }}
-			{{ form.string_cross(disabled=True, class='form-select' + (' is-invalid' if form.string_cross.errors else '')) }}
-				{% if form.string_cross.errors %}
-					<div class="invalid-feedback">
-						{% for error in form.string_cross.errors %}
-							{{ error }}
-						{% endfor %}
-					</div>
-				{% endif %}
-		</div>
-	</div>
-
-	<div class="mb-3 row">
-	  <div class="col">
-		  {{ form.tension_main.label(class='form-label') }} <span class="text-danger">*</span>
-		  <div class="input-group">
-		  {{ form.tension_main(class ='form-control' + (' is-invalid' if form.tension_main.errors else '')) }}
-		  <span class="input-group-text">kg</span>
-		 	</div>		  		    
-		    {% if form.tension_main.errors %}
-		      {% for error in form.tension_main.errors %}
-		        <div class="invalid-feedback">{{ error }}</div>
-		      {% endfor %}
-		    {% endif %}
-		</div>
-		<div class="col">
-		  {{ form.tension_cross.label(class='form-label') }} <span class="text-danger">*</span>
-		  <div class="input-group">
-		  {{ form.tension_cross(class='form-control' + (' is-invalid' if form.tension_cross.errors else '')) }}
-		  <span class="input-group-text">kg</span>
-		 	</div>
-		    {% if form.tension_cross.errors %}
+	<div class="col">
+		{{ form.customer_rackets_opts.label(class='form-label') }} <span class="text-danger">*</span>
+		{{ form.customer_rackets_opts(disabled=True, class='form-select' + (' is-invalid' if form.customer_rackets_opts.errors else '')) }}
+			{% if form.customer_rackets_opts.errors %}
 				<div class="invalid-feedback">
-					{% for error in form.tension_cross.errors %}
-					{{ error }}
+					{% for error in form.customer_rackets_opts.errors %}
+						{{ error }}
 					{% endfor %}
 				</div>
 			{% endif %}
-		</div>
 	</div>
-  	{{ form.submit(class='btn btn-primary') }}
-</form>
 </div>
+
+<div class="mb-3 row">
+	<div class="col">
+		{{ form.string_main.label(class='form-label') }} <span class="text-danger">*</span>
+		{{ form.string_main(class='form-select' + (' is-invalid' if form.string_main.errors else '')) }}
+			{% if form.string_main.errors %}
+				<div class="invalid-feedback">
+					{% for error in form.string_main.errors %}
+						{{ error }}
+					{% endfor %}
+				</div>
+			{% endif %}
+	</div>
+	<div class="col">
+    {{ form.string_cross.label(class='form-label') }}
+    <div class="input-group">
+      <div class="input-group-text">
+      {{ form.hybrid(class='form-check-input mt-0') }}
+      </div>
+      {{ form.string_cross(disabled=True, class='form-select' + (' is-invalid' if form.string_cross.errors else '')) }}
+        {% if form.string_cross.errors %}
+          <div class="invalid-feedback">
+            {% for error in form.string_cross.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+    	</div>
+	  </div>
+  </div>
+
+<div class="mb-3 row">
+	<div class="col-md-3">
+		{{ form.tension_main.label(class='form-label') }} <span class="text-danger">*</span>
+		<div class="input-group">
+		{{ form.tension_main(class ='form-control' + (' is-invalid' if form.tension_main.errors else '')) }}
+		<span class="input-group-text">kg</span>
+		</div>		  		    
+		{% if form.tension_main.errors %}
+			{% for error in form.tension_main.errors %}
+			<div class="invalid-feedback">{{ error }}</div>
+			{% endfor %}
+		{% endif %}
+	</div>
+	<div class="col-md-3">
+		{{ form.tension_cross.label(class='form-label') }} <span class="text-danger">*</span>
+		<div class="input-group">
+		{{ form.tension_cross(class='form-control' + (' is-invalid' if form.tension_cross.errors else '')) }}
+		<span class="input-group-text">kg</span>
+		</div>
+		{% if form.tension_cross.errors %}
+			<div class="invalid-feedback">
+				{% for error in form.tension_cross.errors %}
+				{{ error }}
+				{% endfor %}
+			</div>
+		{% endif %}
+	</div>
+</div>
+{{ form.submit(class='btn btn-primary') }}
+</form>
 
 <script>
 	let customer_select = document.getElementById('customer_opts');
@@ -116,13 +102,8 @@
 	let string_cross_select = document.getElementById('string_cross');
 
 	hybrid_select.onchange = function() {
-		hybrid = hybrid_select.value;
-
-		if (hybrid){
-			string_cross_select.removeAttribute('disabled');
-		} else if(hybrid == False) {
-			string_cross_select.setAttribute('disabled', 'disabled');
-		}
+		hybrid = hybrid_select.checked;
+    hybrid ? string_cross_select.removeAttribute('disabled') : string_cross_select.setAttribute('disabled', 'disabled');
 	}
 
 	customer_select.onchange = function load_rackets() {
@@ -139,6 +120,14 @@
 			});
 		});
 	}
+
+	window.onload = (event) => {
+		if(racket_select.classList.contains('is-invalid')) {
+			customer = customer_select.value;
+			racket_select.removeAttribute('disabled');
+		}
+	}
+
 </script>
 
 {% endblock %}

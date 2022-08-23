@@ -58,11 +58,11 @@ def choice_string():
 class OrderForm(FlaskForm):
     customer_opts = QuerySelectField('Kunde', query_factory=choice_customer, allow_blank=True, get_label='fullname', blank_text='Kunde wählen...')
     customer_rackets_opts = NonValidatingSelectField('Schläger', choices=[], coerce=int)
-    hybrid = SelectField('Hybrid', choices=[(0, 'Nein'), (1, 'Ja')], coerce=int)
+    hybrid = BooleanField('Hybrid', default=False)
     string_main = QuerySelectField('Saite längs', query_factory=choice_string, allow_blank=True, get_label='fullstring', blank_text='Saite wählen...')
     string_cross = QuerySelectField('Saite quer', query_factory=choice_string, allow_blank=True, get_label='fullstring', blank_text='Saite wählen...')
-    tension_main = StringField('Längs', validators=[InputRequired(message='Bitte Wert eingeben')])
-    tension_cross = StringField('Quer', validators=[InputRequired(message='Bitte Wert eingeben')])
+    tension_main = StringField('Längs', validators=[InputRequired(message='Wert eingeben')])
+    tension_cross = StringField('Quer', validators=[InputRequired()])
     submit = SubmitField('Auftrag hinzufügen')
 
     def validate_customer_opts(form, customer_opts):
@@ -72,9 +72,12 @@ class OrderForm(FlaskForm):
     def validate_customer_rackets_opts(form, customer_rackets_opts):
         if form.customer_opts.data:
             if customer_rackets_opts.data is -1:
+                form.customer_rackets_opts.choices = [("-1", "Schläger auswählen...")]+[(rackets.racket.id, rackets.racket.fullracket) for rackets in RacketOwnership.query.filter_by(customer=form.customer_opts.data).all()]
                 raise ValidationError('Schläger auswählen')
-        else:
-            raise ValidationError('Zuerst Kunde wählen')
+    
+    def validate_string_main(form, string_main):
+        if string_main.data is None:
+            raise ValidationError('Saite wählen')
 
 
 class SignupForm(FlaskForm):

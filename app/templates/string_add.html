@@ -1,62 +1,79 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>{{ message }}</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<h3>Saite anlegen</h3>
+
+<form method="POST">
+  {{ form.csrf_token }}
+  {% if form.csrf_token.errors %}
+    {% for error in form.csrf_token.errors %}
+      {{ error }}
+    {% endfor %}
+  {% endif %}
+  <div class="mb-3 row">
+    <div class="col-md-5">
+      {{ form.manufacturer.label(class='form-label') }} <span class="text-danger">*</span>
+      {{ form.manufacturer(class='form-control' + (' is-invalid' if form.manufacturer.errors else '')) }}
+        {% if form.manufacturer.errors %}
+          {% for error in form.manufacturer.errors %}
+            <div class="invalid-feedback">
+              {{ error }}
+            </div>
+          {% endfor %}
+        {% endif %}
+    </div>
+    <div class="col-md-5">
+      {{ form.model.label(class='form-label') }} <span class="text-danger">*</span>
+      {{ form.model(class='form-control' + (' is-invalid' if form.model.errors else '')) }}
+        {% if form.model.errors %}
+          {% for error in form.model.errors %}
+            <div class="invalid-feedback">
+              {{ error }}
+            </div>
+          {% endfor %}
+        {% endif %}
+    </div>
+    <div class="col-md-2">
+      {{ form.gauge.label(class='form-label') }} <span class="text-danger">*</span>
+      <div class="input-group">
+        {{ form.gauge(class='form-control' + (' is-invalid' if form.gauge.errors else '')) }}
+        <span class="input-group-text">mm</span>
+      </div>	
+        {% if form.gauge.errors %}
+          {% for error in form.gauge.errors %}
+            <div class="invalid-feedback">
+              {{ error }}
+            </div>
+          {% endfor %}
+        {% endif %}
+    </div>
   </div>
-{% endfor %}
-
-  <h2 class="mt-5">Saite anlegen</h2>
-
-  <form method="POST">
-    {{ form.hidden_tag() }}
-
-    {{ form.manufacturer.label(class='form-label') }} <span class="text-danger">*</span>
-    {{ form.manufacturer(class='form-control' + (' is-invalid' if form.manufacturer.errors else '')) }}
-      {% if form.manufacturer.errors %}
-        {% for error in form.manufacturer.errors %}
-           <div class="invalid-feedback">
-            {{ error }}
-          </div>
-        {% endfor %}
-      {% endif %}
-
-    {{ form.model.label(class='form-label') }} <span class="text-danger">*</span>
-    {{ form.model(class='form-control' + (' is-invalid' if form.model.errors else '')) }}
-      {% if form.model.errors %}
-        {% for error in form.model.errors %}
-           <div class="invalid-feedback">
-            {{ error }}
-          </div>
-        {% endfor %}
-      {% endif %}
-
-    {{ form.gauge.label(class='form-label') }} <span class="text-danger">*</span>
-    {{ form.gauge(class='form-control' + (' is-invalid' if form.gauge.errors else '')) }}
-      {% if form.gauge.errors %}
-        {% for error in form.gauge.errors %}
-           <div class="invalid-feedback">
-            {{ error }}
-          </div>
-        {% endfor %}
-      {% endif %}
-
-    {{ form.length.label(class='form-label') }}
-    {{ form.length(class ='form-control') }}
-
-    {{ form.color.label(class='form-label') }}
-    {{ form.color(class ='form-control') }}
-
-    {{ form.structure.label(class='form-label') }}
-    {{ form.structure(class ='form-control') }}
-
-    {{ form.price.label(class='form-label') }}
-    {{ form.price(class='form-control') }}
-      
-      <br/>
-      {{ form.submit(class='btn btn-primary') }}
-  </form>
+  <div class="mb-3 row">
+    <div class="col-md-2">
+      {{ form.length.label(class='form-label') }}
+      <div class="input-group">
+        {{ form.length(class ='form-control') }}
+        <span class="input-group-text">m</span>
+      </div>	
+    </div>
+    <div class="col-md-4">
+      {{ form.color.label(class='form-label') }}
+      {{ form.color(class ='form-control') }}
+    </div>
+    <div class="col-md-4">
+      {{ form.structure.label(class='form-label') }}
+      {{ form.structure(class ='form-control') }}
+    </div>
+    <div class="col-md-2">
+      {{ form.price.label(class='form-label') }}
+      <div class="input-group">
+        {{ form.price(class='form-control') }}
+        <span class="input-group-text">€</span>
+      </div>
+    </div>
+  </div>
+  <br/>
+  {{ form.submit(class='btn btn-primary') }}
+</form>
 
 {% endblock %}
