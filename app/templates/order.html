@@ -39,8 +39,8 @@
         <td> {{ order.tension_main }} kg </td>
         <td> 
           <div class="btn-group" role="group">
-            <button class="btn btn-success"><a href="{{ url_for('updateDone', id=order.id) }}" class="link-light"><i class="bi bi-check-circle"></i></a></button>
-            <button type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+            <button type="button" class="btn btn-success"><a href="{{ url_for('updateDone', id=order.id) }}" class="link-light"><i class="bi bi-check-circle"></i></a></button>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{ order.id }}"><i class="bi bi-trash"></i></button>
           </div>
         </td>
       </tr>
@@ -80,4 +80,23 @@
   </tbody>
 </table>
 
+<!-- Delete Modal HTML -->
+{% for order in open_orders %}
+<div class="modal" id="delete{{ order.id }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Soll der Auftrag wirklich gelöscht werden?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+        <a href="{{ url_for('deleteOrder', id=order.id) }}"><button type="button" class="btn btn-danger">Löschen</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
 {% endblock %}

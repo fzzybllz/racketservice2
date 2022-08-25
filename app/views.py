@@ -188,6 +188,13 @@ def updateDone(id):
     db.session.commit()
     return redirect(url_for('order'))
 
+@app.route('/order/delete/<int:id>')
+def deleteOrder(id):
+    order_to_delete = Order.query.get_or_404(id)
+    db.session.delete(order_to_delete)
+    db.session.commit()
+    return redirect(url_for('order'))
+
 ### Login ###
 
 @app.route('/signup', methods=['Get', 'POST'])
