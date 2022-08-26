@@ -147,8 +147,8 @@ def add_string():
 
 @app.route('/order', methods=['GET', 'POST'])
 def order():
-    open_orders = Order.query.filter_by(done=False).order_by(desc(Order.date_added))
-    orders = Order.query.filter_by(done=True).order_by(desc(Order.date_added))
+    open_orders = Order.query.filter_by(done=False).order_by(Order.date_added.desc())
+    orders = Order.query.filter_by(done=True).order_by(Order.paid, Order.date_added.desc())
     return render_template('order.html',
                             open_orders = open_orders,
                             orders = orders)
@@ -185,6 +185,13 @@ def racketSelection(id):
 def updateDone(id):
     order_to_update = Order.query.get_or_404(id)
     order_to_update.done = True
+    db.session.commit()
+    return redirect(url_for('order'))
+
+@app.route('/order/paid/<int:id>')
+def updatePaid(id):
+    order_to_update = Order.query.get_or_404(id)
+    order_to_update.paid = True
     db.session.commit()
     return redirect(url_for('order'))
 

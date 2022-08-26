@@ -59,6 +59,7 @@
           <th scope="col"> Saite </th>
           <th scope="col"> Längs </th>
           <th scope="col"> Quer </th>
+          <th scope="col"> Bezahlt </th>
       </tr>
   </thead>
   <tbody>
@@ -75,6 +76,13 @@
         </td>
         <td> {{ order.tension_main }} kg </td>
         <td> {{ order.tension_main }} kg </td>
+        <td> 
+          {% if order.paid == False %}
+            <button type="button" class="btn btn-primary"><a href="{{ url_for('updatePaid', id=order.id) }}" class="link-light"><i class="bi bi-currency-euro"></i></a></button>
+          {% elif order.paid == True %}
+            <button type="button" class="btn btn-success" disabled><i class="bi bi-currency-euro"></i></button>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   </tbody>
