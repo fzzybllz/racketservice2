@@ -1,18 +1,14 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
-COPY . /srv/flask_app
-WORKDIR /srv/flask_app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-RUN apt-get clean \
-    && apt-get -y update
+WORKDIR /app
 
-RUN apt-get -y install nginx \
-    && apt-get -y install python3-dev \
-    && apt-get -y install build-essential
+COPY requirements.txt .
+RUN apt-get update && apt-get install -y build-essential gcc libpq-dev
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -r requirements.txt --src /usr/local/src
+COPY . /app
 
-COPY nginx.conf /etc/nginx
-
-RUN chmod +x ./start.sh
-CMD /srv/flask_app/start.sh
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "wsgi:app"]
