@@ -71,7 +71,7 @@ class OrderForm(FlaskForm):
 
     def validate_customer_rackets_opts(form, customer_rackets_opts):
         if form.customer_opts.data:
-            if customer_rackets_opts.data is -1:
+            if customer_rackets_opts.data == -1:
                 form.customer_rackets_opts.choices = [("-1", "Schläger auswählen...")]+[(rackets.racket.id, rackets.racket.fullracket) for rackets in RacketOwnership.query.filter_by(customer=form.customer_opts.data).all()]
                 raise ValidationError('Schläger auswählen')
     
