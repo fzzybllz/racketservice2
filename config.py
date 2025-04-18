@@ -1,28 +1,9 @@
-from os import environ, path
-from dotenv import load_dotenv
+import os
 
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '.env'))
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    FLASK_APP=environ.get("FLASK_APP")
-    SECRET_KEY=environ.get('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')
-#    SESSION_COOKIE_NAME = environ.get('SESSION_COOKIE_NAME')
-    STATIC_FOLDER='static'
-    TEMPLATES_FOLDER='templates'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')\
+        or 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    POSTS_PER_PAGE=5
-
-class ProdConfig(Config):
-    FLASK_DEBUG = 0
-    DEBUG = False
-    TESTING = False
-    SQLALCHEMY_DATABASE_URI = environ.get('PROD_DATABASE_URI')
-
-class DevConfig(Config):
-    FLASK_DEBUG = 1
-    DEBUG = True
-    TESTING = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URI')
