@@ -1,7 +1,7 @@
 services:
   # Flask App Service
   web:
-    image: rs-flask:${VERSION}
+    image: fzzybllz/racketservice:${VERSION}
     container_name: flask-app
     volumes:
       - rs-flask-data:/app
