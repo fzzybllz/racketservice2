@@ -1,7 +1,11 @@
 services:
   # Flask App Service
   web:
-    image: fzzybllz/racketservice:${VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn wsgi:app --bind 0.0.0.0:8000
+#    image: fzzybllz/racketservice:${VERSION}
     container_name: flask-app
     volumes:
       - rs-flask-data:/app
@@ -11,7 +15,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       FLASK_APP: ${FLASK_APP}
       FLASK_DEBUG: ${FLASK_DEBUG}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
       - db
 
