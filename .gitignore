@@ -18,3 +18,9 @@ dist/
 build/
 *.egg-info/
 .vscode/settings.json
+
+# Environment variables
+.env
+.env.*
+
+postgres-data/
