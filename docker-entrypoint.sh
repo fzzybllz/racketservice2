@@ -3,6 +3,8 @@
 # Maximum number of retries for database connection
 MAX_RETRIES=30
 RETRY_INTERVAL=2
+POSTGRES_PORT=5432
+POSTGRES_HOST=db
 
 echo "Waiting for PostgreSQL to become available..."
 echo "Host: $POSTGRES_HOST, Port: $POSTGRES_PORT"
@@ -56,6 +58,12 @@ fi
 
 # Execute the main container command
 echo "Starting the application..."
-exec "$@"
-
-#gunicorn -w 4 -b 0.0.0.0:8000 wsgi:app
+# Check if a command was passed to the script
+if [ $# -gt 0 ]; then
+    # If arguments were provided, execute those
+    exec "$@"
+else
+    # Default command if none provided
+    echo "Using default command: gunicorn"
+    exec gunicorn -w 4 -b 0.0.0.0:8000 wsgi:app
+fi

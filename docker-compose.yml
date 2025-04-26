@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: "gunicorn wsgi:app --bind 0.0.0.0:8000"
-#    image: fzzybllz/racketservice:latest
+#    command: "gunicorn wsgi:app --bind 0.0.0.0:8000"
+#    image: fzzybllz/racketservice:${VERSION}
     container_name: flask-app
     ports:
       - "8000:8000"
@@ -13,8 +13,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       FLASK_APP: ${FLASK_APP}
       FLASK_DEBUG: ${FLASK_DEBUG}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_HOST}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       - db
 
