@@ -29,24 +29,29 @@ done
 
 echo "PostgreSQL is now available"
 
-# Run database migrations with error handling
-echo "Running database migrations..."
-if flask db upgrade; then
-    echo "Database migrations completed successfully"
-else
-    migration_exit_code=$?
-    echo "Error: Database migration failed with exit code $migration_exit_code"
-    
-    # Check if it's a common migration error
-    if flask db current 2>&1 | grep -q "Error: Can't locate revision identified by"; then
-        echo "Error: Migration history is inconsistent. Please check your migration files and database state."
-    elif flask db current 2>&1 | grep -q "Error: Connection refused"; then
-        echo "Error: Could not connect to the database. Please check your database connection settings."
+# Check if migrations should be skipped
+if [ "${SKIP_MIGRATIONS}" != "true" ]; then
+    # Run database migrations with error handling
+    echo "Running database migrations..."
+    if flask db upgrade; then
+        echo "Database migrations completed successfully"
     else
-        echo "Error: An unexpected error occurred during migration. Please check the logs for more details."
+        migration_exit_code=$?
+        echo "Error: Database migration failed with exit code $migration_exit_code"
+        
+        # Check if it's a common migration error
+        if flask db current 2>&1 | grep -q "Error: Can't locate revision identified by"; then
+            echo "Error: Migration history is inconsistent. Please check your migration files and database state."
+        elif flask db current 2>&1 | grep -q "Error: Connection refused"; then
+            echo "Error: Could not connect to the database. Please check your database connection settings."
+        else
+            echo "Error: An unexpected error occurred during migration. Please check the logs for more details."
+        fi
+        
+        exit $migration_exit_code
     fi
-    
-    exit $migration_exit_code
+else
+    echo "Skipping database migrations as requested"
 fi
 
 # Execute the main container command

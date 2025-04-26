@@ -271,11 +271,4 @@ def create_app(config_class=Config):
             new_val=""
         return new_val
 
-    with app.app_context():
-        # Import models
-        from app.models import Customers, Rackets, String, RacketOwnership, Order
-        
-        # Create tables
-        db.create_all()
-
     return app
