@@ -28,5 +28,9 @@ build/
 # Allow example environment file
 !.env.example
 
+# Database directories
 postgres-data/
 postgres-data-dev/
+
+# Backup files
+*.bak
