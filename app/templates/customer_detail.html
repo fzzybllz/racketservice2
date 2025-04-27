@@ -12,34 +12,48 @@
     <h1 class="title">{{ customer.firstname }} {{ customer.lastname }} </h1>
   </div>
   <div class="shadow p-3 mb-5 bg-body rounded">
-    <h3>Profil</h3>
-    <ul>
-      <li>
-        <span class="field-name">{{ cform.street.label }}: </span>
-        <span class="field-value">{{ customer.street }}</span>
-      </li>
-      <li>
-        <span class="field-name">{{ cform.plz.label }}:</span>
-        <span class="field-value">{{ customer.plz }}</span>
-      </li>
-      <li>
-        <span class="field-name">{{ cform.city.label }}:</span>
-        <span class="field-value">{{ customer.city }}</span>
-      </li>
-      <li>
-        <span class="field-name">{{ cform.phone.label }}:</span>
-        <span class="field-value">{{ customer.phone }}</span>
-      </li>
-      <li>
-        <span class="field-name">{{ cform.email.label }}:</span>
-        <span class="field-value">{{ customer.email }}</span>
-      </li>
-    </ul>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-person-fill me-2"></i>Persönliche Daten</h5>
+            <div class="mb-2">
+              <span class="fw-bold">{{ cform.street.label }}:</span>
+              <span class="ms-2">{{ customer.street }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold">{{ cform.plz.label }}:</span>
+              <span class="ms-2">{{ customer.plz }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold">{{ cform.city.label }}:</span>
+              <span class="ms-2">{{ customer.city }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-envelope-fill me-2"></i>Kontakt</h5>
+            <div class="mb-2">
+              <span class="fw-bold">{{ cform.phone.label }}:</span>
+              <span class="ms-2">{{ customer.phone }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold">{{ cform.email.label }}:</span>
+              <span class="ms-2">{{ customer.email }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="shadow p-3 mb-5 bg-body rounded">
     <h3>Schläger</h3>
     
+    {% if rackets_owned %}
     <table class="table table-hover">
       <thead>
         <tr>     
@@ -60,6 +74,11 @@
         {% endfor %}
       </tbody>
     </table>
+    {% else %}
+    <div class="alert alert-light" role="alert">
+      <i class="bi bi-info-circle-fill me-2"></i> Füge jetzt den ersten Schläger hinzu
+    </div>
+    {% endif %}
   </div>
 
   <div class="shadow p-3 mb-5 bg-body rounded">
