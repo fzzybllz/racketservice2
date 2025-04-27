@@ -1,0 +1,38 @@
+services:
+  # Flask App Service
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-app-dev
+    volumes:
+      - ./app:/usr/src/app/app  # Mount the app directory for live code changes
+      - ./config.py:/usr/src/app/config.py  # Mount config file
+      - ./wsgi.py:/usr/src/app/wsgi.py  # Mount wsgi file
+    entrypoint: ["/usr/src/app/docker-entrypoint-dev.sh"]
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      FLASK_APP: ${FLASK_APP}
+      FLASK_DEBUG: "true"
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      - db
+
+  # PostgreSQL Database Service
+  db:
+    image: postgres:13
+    container_name: flask-db-dev
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres-data-dev:/var/lib/postgresql/data
+
+# Volumes to persist data
+volumes:
+  postgres-data-dev: 
