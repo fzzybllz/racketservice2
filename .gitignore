@@ -29,3 +29,4 @@ build/
 !.env.example
 
 postgres-data/
+postgres-data-dev/
