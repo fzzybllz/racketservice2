@@ -83,16 +83,42 @@ docker compose run --rm web flask db upgrade
   - `static/` - Static files (CSS, JS, images)
 - `migrations/` - Database migrations
 - `docker-compose.yml` - Docker Compose configuration
+- `docker-compose.dev.yml` - Development Docker Compose configuration
 - `Dockerfile` - Docker container definition
 - `docker-entrypoint.sh` - Container startup script
+- `docker-entrypoint-dev.sh` - Development container startup script
+- `dev.sh` - Script to start development environment
 - `config.py` - Application configuration
 - `wsgi.py` - WSGI entry point
 
 ## Development
 
+### Development Mode with Hot-Reloading
+
+For active development with hot-reloading (changes apply immediately without restarting the container):
+
+1. Make sure you have the `.env` file as described in the Installation section.
+
+2. Start the development environment:
+   ```
+   ./dev.sh
+   ```
+   
+   This script will:
+   - Set up a fresh development environment
+   - Mount your local code directories as volumes
+   - Enable hot-reloading for Flask
+   - Expose the PostgreSQL port for direct database access
+   
+3. Access the application at [http://localhost:8000](http://localhost:8000)
+
+4. Make changes to the code and they will be automatically applied
+
+5. The PostgreSQL database is accessible at `localhost:5432` with the credentials from your `.env` file
+
 ### Running locally with SQLite
 
-For development, you can run the application locally using SQLite:
+For development, you can also run the application locally using SQLite:
 
 1. Create a virtual environment and install dependencies:
    ```
@@ -124,6 +150,7 @@ For development, you can run the application locally using SQLite:
 - Rebuild containers: `docker compose up --build`
 - View logs: `docker compose logs`
 - Execute command in web container: `docker compose run --rm web <command>`
+- Start development mode: `./dev.sh`
 
 ## License
 
