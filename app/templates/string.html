@@ -103,63 +103,45 @@
       </div>
         
       {% if strings.items %}
-      <div class="pagination-controls-wrapper" style="display: flex; align-items: center; justify-content: flex-end; margin-top: 1.5rem;">
-        <div style="display: flex; align-items: center; margin-right: 1rem;">
-          <span style="color: #9ca3af; margin-right: 0.5rem; display: flex; align-items: center; height: 38px;">Anzeigen:</span>
-          <select id="perPageSelect" class="form-select" style="height: 38px; width: 85px; background-color: #383c44; color: #e0e0e0; border-color: rgba(99, 102, 241, 0.2);">
-            {% set current_per_page = per_page|default(10) %}
-            <option value="10" {% if current_per_page == 10 %}selected{% endif %}>10</option>
-            <option value="25" {% if current_per_page == 25 %}selected{% endif %}>25</option>
-            <option value="50" {% if current_per_page == 50 %}selected{% endif %}>50</option>
-            <option value="100" {% if current_per_page == 100 %}selected{% endif %}>100</option>
-            <option value="9999" {% if current_per_page >= 9999 %}selected{% endif %}>Alle</option>
-          </select>
+      <div class="pagination-controls-wrapper">
+        <div class="pagination-card">
+          <div class="pagination-content">
+            <div class="per-page-selector">
+              <span class="text-muted">Anzeigen:</span>
+              <select id="perPageSelect" class="form-select">
+                {% set current_per_page = per_page|default(10) %}
+                <option value="10" {% if current_per_page == 10 %}selected{% endif %}>10</option>
+                <option value="25" {% if current_per_page == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if current_per_page == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if current_per_page == 100 %}selected{% endif %}>100</option>
+                <option value="9999" {% if current_per_page >= 9999 %}selected{% endif %}>Alle</option>
+              </select>
+            </div>
+            <div class="pagination-info-arrows">
+              {% set first_item = (strings.page - 1) * strings.per_page + 1 %}
+              {% set last_item = (strings.page - 1) * strings.per_page + strings.items|length %}
+              <span class="text-muted">{{ first_item }}–{{ last_item }} von {{ strings.total }}</span>
+              <nav aria-label="Page navigation">
+                <ul class="pagination" style="gap: 0.5rem;">
+                  <li>
+                    {% if strings.has_prev %}
+                      <span class="pagination-arrow" role="button" tabindex="0" onclick="window.location='{{ url_for('string', page=strings.page-1, per_page=current_per_page) }}'"><i class="bi bi-chevron-left"></i></span>
+                    {% else %}
+                      <span class="pagination-arrow disabled" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
+                    {% endif %}
+                  </li>
+                  <li>
+                    {% if strings.has_next %}
+                      <span class="pagination-arrow" role="button" tabindex="0" onclick="window.location='{{ url_for('string', page=strings.page+1, per_page=current_per_page) }}'"><i class="bi bi-chevron-right"></i></span>
+                    {% else %}
+                      <span class="pagination-arrow disabled" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
+                    {% endif %}
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
         </div>
-        {% if strings.total > strings.per_page %}
-        <nav aria-label="Page navigation" style="display: flex; align-items: center;">
-          <ul class="pagination" style="margin-bottom: 0; display: flex; align-items: center;">
-            {% if strings.has_prev %}
-              <li class="page-item">
-                <a class="page-link" href="{{ url_for('string', page=strings.page-1, per_page=current_per_page) }}" aria-label="Previous" style="display: flex; align-items: center; justify-content: center; height: 38px; min-width: 38px; padding: 0 0.75rem;">
-                  <i class="bi bi-chevron-left"></i>
-                </a>
-              </li>
-            {% else %}
-              <li class="page-item disabled">
-                <span class="page-link" style="display: flex; align-items: center; justify-content: center; height: 38px; min-width: 38px; padding: 0 0.75rem;">
-                  <i class="bi bi-chevron-left"></i>
-                </span>
-              </li>
-            {% endif %}
-            
-            {% for page in strings.iter_pages() %}
-              {% if page == strings.page %}
-                <li class="page-item active">
-                  <span class="page-link" style="display: flex; align-items: center; justify-content: center; height: 38px; min-width: 38px; padding: 0 0.75rem;">{{ page }}</span>
-                </li>
-              {% else %}
-                <li class="page-item">
-                  <a class="page-link" href="{{ url_for('string', page=page, per_page=current_per_page) }}" style="display: flex; align-items: center; justify-content: center; height: 38px; min-width: 38px; padding: 0 0.75rem;">{{ page }}</a>
-                </li>
-              {% endif %}
-            {% endfor %}
-            
-            {% if strings.has_next %}
-              <li class="page-item">
-                <a class="page-link" href="{{ url_for('string', page=strings.page+1, per_page=current_per_page) }}" aria-label="Next" style="display: flex; align-items: center; justify-content: center; height: 38px; min-width: 38px; padding: 0 0.75rem;">
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-              </li>
-            {% else %}
-              <li class="page-item disabled">
-                <span class="page-link" style="display: flex; align-items: center; justify-content: center; height: 38px; min-width: 38px; padding: 0 0.75rem;">
-                  <i class="bi bi-chevron-right"></i>
-                </span>
-              </li>
-            {% endif %}
-          </ul>
-        </nav>
-        {% endif %}
       </div>
       {% endif %}
     </div>
