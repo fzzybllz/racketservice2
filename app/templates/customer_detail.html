@@ -8,98 +8,137 @@
   </div>
 {% endfor %}
 
-  <div class="shadow p-3 mb-5 bg-body rounded">
-    <h1 class="title">{{ customer.firstname }} {{ customer.lastname }} </h1>
+<!-- Customer header with name, info and controls -->
+<div class="shadow p-4 mb-4 bg-body rounded">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="title mb-0">
+      <i class="bi bi-person-circle me-2"></i>{{ customer.firstname }} {{ customer.lastname }}
+    </h1>
+    <a class="btn btn-outline-primary" href="{{ url_for('customer') }}">
+      <i class="bi bi-arrow-left me-1"></i>Zurück zur Übersicht
+    </a>
   </div>
-  <div class="shadow p-3 mb-5 bg-body rounded">
-    <div class="row g-3">
-      <div class="col-md-6">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-person-fill me-2"></i>Persönliche Daten</h5>
-            <div class="mb-2">
-              <span class="fw-bold">{{ cform.street.label }}:</span>
-              <span class="ms-2">{{ customer.street }}</span>
-            </div>
-            <div class="mb-2">
-              <span class="fw-bold">{{ cform.plz.label }}:</span>
-              <span class="ms-2">{{ customer.plz }}</span>
-            </div>
-            <div class="mb-2">
-              <span class="fw-bold">{{ cform.city.label }}:</span>
-              <span class="ms-2">{{ customer.city }}</span>
-            </div>
+  
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-primary bg-opacity-10">
+          <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Persönliche Daten</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <span class="fw-bold">{{ cform.street.label }}:</span>
+            <span class="ms-2">{{ customer.street }}</span>
+          </div>
+          <div class="mb-3">
+            <span class="fw-bold">{{ cform.plz.label }}:</span>
+            <span class="ms-2">{{ customer.plz }}</span>
+          </div>
+          <div class="mb-3">
+            <span class="fw-bold">{{ cform.city.label }}:</span>
+            <span class="ms-2">{{ customer.city }}</span>
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title"><i class="bi bi-envelope-fill me-2"></i>Kontakt</h5>
-            <div class="mb-2">
-              <span class="fw-bold">{{ cform.phone.label }}:</span>
-              <span class="ms-2">{{ customer.phone }}</span>
-            </div>
-            <div class="mb-2">
-              <span class="fw-bold">{{ cform.email.label }}:</span>
-              <span class="ms-2">{{ customer.email }}</span>
-            </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-primary bg-opacity-10">
+          <h5 class="card-title mb-0"><i class="bi bi-envelope-fill me-2"></i>Kontakt</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <span class="fw-bold">{{ cform.phone.label }}:</span>
+            <span class="ms-2">{{ customer.phone }}</span>
+          </div>
+          <div class="mb-3">
+            <span class="fw-bold">Mail:</span>
+            <span class="ms-2">
+              <a href="mailto:{{ customer.email }}" class="text-decoration-none">
+                {{ customer.email }}
+                <i class="bi bi-envelope-fill ms-1 small"></i>
+              </a>
+            </span>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="shadow p-3 mb-5 bg-body rounded">
-    <h3>Schläger</h3>
-    
-    {% if rackets_owned %}
-    <table class="table table-hover">
-      <thead>
+<!-- Rackets section with table or info message -->
+<div class="shadow p-4 mb-4 bg-body rounded">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Schläger</h3>
+    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addRacketForm" aria-expanded="false" aria-controls="addRacketForm">
+      <i class="bi bi-plus-circle me-1"></i>Schläger hinzufügen
+    </button>
+  </div>
+  
+  {% if rackets_owned %}
+  <div class="table-responsive">
+    <table class="table table-hover border-top">
+      <thead class="table-light">
         <tr>     
-          <th scope="col"> {{ rform.manufacturer.label }} </th>
-          <th scope="col"> {{ rform.model.label }} </th>
-          <th scope="col"> {{ rform.template.label }} </th>
-          <th scope="col"> {{ crform.uid.label }} </th>
+          <th scope="col"><i class="bi bi-tag me-1"></i>{{ rform.manufacturer.label }}</th>
+          <th scope="col"><i class="bi bi-box me-1"></i>{{ rform.model.label }}</th>
+          <th scope="col"><i class="bi bi-layers me-1"></i>{{ rform.template.label }}</th>
+          <th scope="col"><i class="bi bi-upc me-1"></i>{{ crform.uid.label }}</th>
+          <th scope="col" class="text-end">Aktionen</th>
         </tr>
       </thead>
       <tbody>
         {% for racket in rackets_owned %}
-          <tr onclick="window.location='{{ url_for('racket_detail', racket_id=racket.racket.id) }}';">
-            <td> {{ racket.racket.manufacturer }}</td>
-            <td> {{ racket.racket.model }} </td>
-            <td> {{ racket.racket.template }} </td>
-            <td> {{ racket.uid }} </td>
+          <tr>
+            <td>{{ racket.racket.manufacturer }}</td>
+            <td>{{ racket.racket.model }}</td>
+            <td>{{ racket.racket.template }}</td>
+            <td>{{ racket.uid }}</td>
+            <td class="text-end">
+              <a href="{{ url_for('racket_detail', racket_id=racket.racket.id) }}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-eye me-1"></i>Details
+              </a>
+            </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
-    {% else %}
-    <div class="alert alert-light" role="alert">
-      <i class="bi bi-info-circle-fill me-2"></i> Füge jetzt den ersten Schläger hinzu
+  </div>
+  {% else %}
+  <div class="card border-0 bg-light">
+    <div class="card-body text-center py-5">
+      <i class="bi bi-racket display-1 text-secondary mb-3"></i>
+      <h5>Keine Schläger vorhanden</h5>
+      <p class="text-muted">Füge jetzt den ersten Schläger hinzu</p>
     </div>
-    {% endif %}
   </div>
-
-  <div class="shadow p-3 mb-5 bg-body rounded">
-    <h3>Schläger hinzufügen</h3>
-
-    <form method="POST">
-      <br/>
-      {{ crform.hidden_tag() }}
-      {{ crform.racket_opts(class='form-select' + (' is-invalid' if crform.racket_opts.errors else '')) }}
-        {% if crform.racket_opts.errors %}
-          {% for error in crform.racket_opts.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-          {% endfor %}
-        {% endif %}
-      {{ crform.uid.label(class='form-label') }}
-      {{ crform.uid(class ='form-control') }}
-      <br/>
-      {{ crform.submit(class='btn btn-primary') }}
-    </form>
+  {% endif %}
+  
+  <!-- Collapsible add racket form -->
+  <div class="collapse mt-4" id="addRacketForm">
+    <div class="card border-0 bg-light">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-plus-circle me-2"></i>Neuen Schläger hinzufügen</h5>
+        <form method="POST" class="mt-3">
+          {{ crform.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label">Schläger auswählen</label>
+            {{ crform.racket_opts(class='form-select' + (' is-invalid' if crform.racket_opts.errors else '')) }}
+            {% if crform.racket_opts.errors %}
+              {% for error in crform.racket_opts.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            {{ crform.uid.label(class='form-label') }}
+            {{ crform.uid(class='form-control') }}
+          </div>
+          {{ crform.submit(class='btn btn-primary') }}
+        </form>
+      </div>
+    </div>
   </div>
-
-<a class="btn btn-primary" role="button" href="{{ url_for('customer') }}">zurück</a>
+</div>
 
 {% endblock %}

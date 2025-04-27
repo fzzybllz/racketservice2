@@ -14,23 +14,27 @@ document.addEventListener('DOMContentLoaded', function() {
   // Parse pattern (e.g., "16x19")
   const [mainStrings, crossStrings] = pattern.split('x').map(Number);
   
-  // Set canvas size
+  // Increase canvas size for a bigger sketch
+  racketCanvas.width = 300;
+  racketCanvas.height = 400;
+  
+  // Get the updated canvas size
   const canvasWidth = racketCanvas.width;
   const canvasHeight = racketCanvas.height;
   
   // Clear canvas
   ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   
-  // Define racket shape parameters
-  const racketWidth = canvasWidth * 0.8;
-  const racketHeight = canvasHeight * 0.9;
-  const headWidth = racketWidth * 0.7;
-  const headHeight = racketHeight * 0.5;
-  const handleLength = racketHeight * 0.4;
+  // Define racket shape parameters - make it fill almost the entire canvas
+  const racketWidth = canvasWidth * 0.95;
+  const racketHeight = canvasHeight * 0.98;
+  const headWidth = racketWidth * 0.9;
+  const headHeight = racketHeight * 0.75; // Stretch head vertically
+  const handleLength = racketHeight * 0.04; // 90% shorter handle
   
-  // Calculate center points
+  // Calculate center points - move it closer to the top to account for minimal handle
   const centerX = canvasWidth / 2;
-  const headCenterY = (canvasHeight - handleLength) / 2;
+  const headCenterY = canvasHeight * 0.45; // Move center slightly up
   
   // Draw racket outline
   drawRacketOutline(ctx, centerX, headCenterY, headWidth, headHeight, handleLength);
@@ -45,14 +49,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function drawRacketOutline(ctx, centerX, centerY, headWidth, headHeight, handleLength) {
   // Set styles for racket frame
   ctx.strokeStyle = '#333';
-  ctx.lineWidth = 6;
+  ctx.lineWidth = 8; // Thicker frame
   
   // Draw head (ellipse)
   ctx.beginPath();
   ctx.ellipse(centerX, centerY, headWidth / 2, headHeight / 2, 0, 0, Math.PI * 2);
   ctx.stroke();
   
-  // Draw handle
+  // Draw handle (much shorter)
   const handleWidth = headWidth * 0.15;
   ctx.beginPath();
   ctx.moveTo(centerX - handleWidth / 2, centerY + headHeight / 2);
@@ -61,32 +65,20 @@ function drawRacketOutline(ctx, centerX, centerY, headWidth, headHeight, handleL
   ctx.lineTo(centerX + handleWidth / 2, centerY + headHeight / 2);
   ctx.stroke();
   
-  // Draw grip patterns
-  const gripLines = 6;
-  const gripSpacing = handleLength / (gripLines + 1);
-  ctx.lineWidth = 1;
-  
-  for (let i = 1; i <= gripLines; i++) {
-    const y = centerY + headHeight / 2 + i * gripSpacing;
-    ctx.beginPath();
-    ctx.moveTo(centerX - handleWidth / 2, y);
-    ctx.lineTo(centerX + handleWidth / 2, y);
-    ctx.stroke();
-  }
+  // No grip patterns needed for very short handle
 }
 
 /**
  * Draws the string pattern inside the racket head
  */
 function drawStringPattern(ctx, centerX, centerY, headWidth, headHeight, mainStrings, crossStrings) {
-  // Set styles for strings
-  ctx.strokeStyle = '#4287f5';
-  ctx.lineWidth = 1.5;
+  const innerWidth = headWidth * 0.9; // Less space between strings and frame
+  const innerHeight = headHeight * 0.9; // Less space between strings and frame
   
-  const innerWidth = headWidth * 0.85;
-  const innerHeight = headHeight * 0.85;
+  // Draw vertical strings (main strings) - dark grey
+  ctx.strokeStyle = '#333333'; // Darker grey for better visibility
+  ctx.lineWidth = 2; // Thicker strings
   
-  // Draw vertical strings (main strings)
   const mainSpacing = innerWidth / (mainStrings - 1);
   const mainStart = centerX - innerWidth / 2;
   
@@ -101,7 +93,9 @@ function drawStringPattern(ctx, centerX, centerY, headWidth, headHeight, mainStr
     ctx.stroke();
   }
   
-  // Draw horizontal strings (cross strings)
+  // Draw horizontal strings (cross strings) - red
+  ctx.strokeStyle = '#D03030';
+  
   const crossSpacing = innerHeight / (crossStrings - 1);
   const crossStart = centerY - innerHeight / 2;
   

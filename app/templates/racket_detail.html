@@ -14,7 +14,7 @@
 <div class="shadow p-4 mb-4 bg-body rounded">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="title mb-0">
-      <i class="bi bi-award me-2"></i>{{ racket.manufacturer }} {{ racket.model }}
+      {{ racket.manufacturer }} {{ racket.model }}
     </h1>
     <a class="btn btn-outline-primary" href="{{ url_for('racket') }}">
       <i class="bi bi-arrow-left me-1"></i>Zurück zur Übersicht
@@ -28,17 +28,17 @@
           <h5 class="card-title mb-0"><i class="bi bi-info-circle me-2"></i>Spezifikationen</h5>
         </div>
         <div class="card-body">
-          <div class="mb-3">
-            <span class="fw-bold">{{ form.template.label }}:</span>
-            <span class="ms-2">{{ racket.template }}</span>
+          <div class="row mb-3">
+            <div class="col-5 fw-bold">{{ form.template.label }}:</div>
+            <div class="col-7">{{ racket.template }}</div>
           </div>
-          <div class="mb-3">
-            <span class="fw-bold">{{ form.skips_head.label }}:</span>
-            <span class="ms-2">{{ racket.skips_head }}</span>
+          <div class="row mb-3">
+            <div class="col-5 fw-bold">{{ form.skips_head.label }}:</div>
+            <div class="col-7">{{ racket.skips_head }}</div>
           </div>
-          <div class="mb-3">
-            <span class="fw-bold">{{ form.skips_tail.label }}:</span>
-            <span class="ms-2">{{ racket.skips_tail }}</span>
+          <div class="row mb-3">
+            <div class="col-5 fw-bold">{{ form.skips_tail.label }}:</div>
+            <div class="col-7">{{ racket.skips_tail }}</div>
           </div>
         </div>
       </div>
@@ -48,9 +48,8 @@
         <div class="card-header bg-primary bg-opacity-10">
           <h5 class="card-title mb-0"><i class="bi bi-diagram-3 me-2"></i>Besaitung</h5>
         </div>
-        <div class="card-body text-center">
-          <canvas id="racket-canvas" width="240" height="320" data-pattern="{{ racket.template }}" class="img-fluid"></canvas>
-          <p class="mt-2 text-muted">Besaitungsmuster: {{ racket.template }}</p>
+        <div class="card-body text-center py-2 px-1">
+          <canvas id="racket-canvas" width="300" height="400" data-pattern="{{ racket.template }}" class="img-fluid"></canvas>
         </div>
       </div>
     </div>
