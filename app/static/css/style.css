@@ -1,0 +1,114 @@
+/* Base styles and variables */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --navbar-bg: #f8f9fa;
+  --navbar-text: #212529;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.125);
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-text: #212529;
+  --table-header-bg: #f8f9fa;
+  --table-row-bg: #ffffff;
+  --table-row-alt-bg: #f9f9f9;
+  --table-border: #dee2e6;
+  --button-primary-bg: #0d6efd;
+  --button-primary-text: #ffffff;
+  --button-outline-color: #6c757d;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --bg-color: #222222;
+  --text-color: #e0e0e0;
+  --navbar-bg: #343a40;
+  --navbar-text: #f8f9fa;
+  --card-bg: #333333;
+  --card-border: rgba(255, 255, 255, 0.125);
+  --input-bg: #333333;
+  --input-border: #555555;
+  --input-text: #e0e0e0;
+  --table-header-bg: #343a40;
+  --table-row-bg: #333333;
+  --table-row-alt-bg: #3a3a3a;
+  --table-border: #555555;
+  --button-primary-bg: #0d6efd;
+  --button-primary-text: #ffffff;
+  --button-outline-color: #ced4da;
+}
+
+/* Apply theme to elements */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar {
+  background-color: var(--navbar-bg) !important;
+  color: var(--navbar-text) !important;
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.form-control, .form-select {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-color: var(--input-border);
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+
+.table {
+  color: var(--text-color);
+  border-color: var(--table-border);
+}
+
+.table thead th {
+  background-color: var(--table-header-bg);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--table-row-alt-bg);
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+  background-color: var(--table-row-bg);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Custom styles */
+.shadow {
+  background-color: var(--card-bg);
+}
+
+.bg-body {
+  background-color: var(--card-bg) !important;
+}
+
+/* Theme toggle icons */
+#dark-icon, #light-icon {
+  transition: display 0.3s ease;
+}
+
+/* Profile page styles */
+.field-name {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+/* Table hover effect */
+.table tbody tr:hover {
+  cursor: pointer;
+  background-color: rgba(13, 110, 253, 0.1);
+} 
