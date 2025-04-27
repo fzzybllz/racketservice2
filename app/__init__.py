@@ -26,11 +26,19 @@ def create_app(config_class=Config):
     @app.route('/customer', methods=['GET', 'POST'])
     def customer():
         page = request.args.get('page', 1, type=int)
-        customers = Customers.query.order_by(Customers.lastname).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+        per_page = request.args.get('per_page', app.config['POSTS_PER_PAGE'], type=int)
+        
+        # If per_page is set to 9999 (the "Alle" option), use the total count of customers
+        if per_page >= 9999:
+            total_customers = Customers.query.count()
+            per_page = total_customers if total_customers > 0 else 10
+            
+        customers = Customers.query.order_by(Customers.lastname).paginate(per_page=per_page, page=page, error_out=True)
         form = CustomerForm()
         return render_template('customer.html',
-                                customers = customers,
-                                form=form)
+                                customers=customers,
+                                form=form,
+                                per_page=per_page)
 
     @app.route('/customer/add', methods=['GET', 'POST'])
     def add_customer():
@@ -83,11 +91,19 @@ def create_app(config_class=Config):
     @app.route('/racket', methods=['GET', 'POST'])
     def racket():
         page = request.args.get('page', 1, type=int)
-        rackets = Rackets.query.order_by(Rackets.id).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+        per_page = request.args.get('per_page', app.config['POSTS_PER_PAGE'], type=int)
+        
+        # If per_page is set to 9999 (the "Alle" option), use the total count of rackets
+        if per_page >= 9999:
+            total_rackets = Rackets.query.count()
+            per_page = total_rackets if total_rackets > 0 else 10
+            
+        rackets = Rackets.query.order_by(Rackets.id).paginate(per_page=per_page, page=page, error_out=True)
         form = RacketForm()
         return render_template('racket.html',
-                                rackets = rackets,
-                                form=form)
+                                rackets=rackets,
+                                form=form,
+                                per_page=per_page)
 
     @app.route('/racket/<int:racket_id>')
     def racket_detail(racket_id):
@@ -122,11 +138,19 @@ def create_app(config_class=Config):
     @app.route('/string', methods=['GET', 'POST'])
     def string():
         page = request.args.get('page', 1, type=int)
-        strings = String.query.order_by(String.id).paginate(per_page=app.config['POSTS_PER_PAGE'], page=page, error_out=True)
+        per_page = request.args.get('per_page', app.config['POSTS_PER_PAGE'], type=int)
+        
+        # If per_page is set to 9999 (the "Alle" option), use the total count of strings
+        if per_page >= 9999:
+            total_strings = String.query.count()
+            per_page = total_strings if total_strings > 0 else 10
+            
+        strings = String.query.order_by(String.id).paginate(per_page=per_page, page=page, error_out=True)
         form = StringForm()
         return render_template('string.html',
-                                strings = strings,
-                                form=form)
+                                strings=strings,
+                                form=form,
+                                per_page=per_page)
 
     @app.route('/string/<int:string_id>')
     def string_detail(string_id):

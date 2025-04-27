@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13-alpine
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -6,11 +6,14 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /usr/src/app
 
 # Create a non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN addgroup -S appuser && adduser -S appuser -G appuser
 
 COPY requirements.txt .
-RUN apt-get update && apt-get install -y build-essential gcc libpq-dev netcat-openbsd
-RUN pip install --no-cache-dir -r requirements.txt
+# Update packages to fix vulnerabilities and install dependencies
+RUN apk update && \
+    apk add --no-cache build-base gcc postgresql-dev linux-headers && \
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
 RUN chmod 755 docker-entrypoint.sh
