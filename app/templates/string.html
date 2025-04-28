@@ -57,7 +57,7 @@
           </thead>
           <tbody>
             {% for string in strings.items %}
-              <tr onclick="window.location='{{ url_for('string_detail', string_id=string.id) }}';">
+              <tr data-href="{{ url_for('string_detail', string_id=string.id) }}" class="clickable-row">
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="table-icon" style="background-color: #6366f1; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;">
@@ -74,15 +74,7 @@
                   {% set consumption = string.consumption|int if string.consumption is not none else 0 %}
                   {% set remaining_units = ((200 - (12 * consumption)) / 12)|int %}
                   <div class="d-flex align-items-center">
-                    <div style="width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; 
-                      {% if remaining_units >= 3 %}
-                        background-color: #198754;
-                      {% elif remaining_units > 0 %}
-                        background-color: #ffc107;
-                      {% else %}
-                        background-color: #dc3545;
-                      {% endif %}
-                    "></div>
+                    <div class="status-indicator {% if remaining_units >= 3 %}status-good{% elif remaining_units > 0 %}status-warning{% else %}status-bad{% endif %}"></div>
                     <span>{{ remaining_units }}</span>
                   </div>
                 </td>
@@ -125,14 +117,14 @@
                 <ul class="pagination" style="gap: 0.5rem;">
                   <li>
                     {% if strings.has_prev %}
-                      <span class="pagination-arrow" role="button" tabindex="0" onclick="window.location='{{ url_for('string', page=strings.page-1, per_page=current_per_page) }}'"><i class="bi bi-chevron-left"></i></span>
+                      <span class="pagination-arrow" role="button" tabindex="0" data-href="{{ url_for('string', page=strings.page-1, per_page=current_per_page) }}"><i class="bi bi-chevron-left"></i></span>
                     {% else %}
                       <span class="pagination-arrow disabled" aria-disabled="true"><i class="bi bi-chevron-left"></i></span>
                     {% endif %}
                   </li>
                   <li>
                     {% if strings.has_next %}
-                      <span class="pagination-arrow" role="button" tabindex="0" onclick="window.location='{{ url_for('string', page=strings.page+1, per_page=current_per_page) }}'"><i class="bi bi-chevron-right"></i></span>
+                      <span class="pagination-arrow" role="button" tabindex="0" data-href="{{ url_for('string', page=strings.page+1, per_page=current_per_page) }}"><i class="bi bi-chevron-right"></i></span>
                     {% else %}
                       <span class="pagination-arrow disabled" aria-disabled="true"><i class="bi bi-chevron-right"></i></span>
                     {% endif %}
@@ -296,7 +288,33 @@
         sortTable(index);
       });
     });
+    
+    // Add click handlers for clickable rows
+    document.querySelectorAll('.clickable-row').forEach(row => {
+      row.addEventListener('click', function() {
+        window.location.href = this.dataset.href;
+      });
+    });
+    
+    // Add click handlers for pagination arrows
+    document.querySelectorAll('.pagination-arrow:not(.disabled)').forEach(arrow => {
+      arrow.addEventListener('click', function() {
+        window.location.href = this.dataset.href;
+      });
+    });
   });
 </script>
+
+<style>
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.status-good { background-color: #198754; }
+.status-warning { background-color: #ffc107; }
+.status-bad { background-color: #dc3545; }
+</style>
 
 {% endblock %}
