@@ -1,0 +1,39 @@
+services:
+
+#PHP Service
+  app:
+    build:
+      args:
+        user: dominik
+        uid: 1000
+      context: ./
+      dockerfile: ./build/Dockerfile
+    image: racketservice
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./app:/var/www
+
+#PostgreSQL Service
+  db:
+    image: postgres:12.0-alpine
+    restart: unless-stopped
+    working_dir: /data/pgsql
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    ports:
+      - 5432:5432
+
+#Nginx Service
+  nginx:
+    image: nginx:1.17-alpine
+    restart: unless-stopped
+    ports:
+      - 8086:80
+    volumes:
+      - ./app:/var/www
+      - ./web:/etc/nginx/conf.d
