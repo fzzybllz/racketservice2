@@ -6,18 +6,48 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="{{ url_for('order') }}">Aufträge</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="{{ url_for('customer') }}">Kunden</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="{{ url_for('racket') }}">Schläger</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="{{ url_for('string') }}">Saite</a>
-          </li>
+          {% if current_user.is_authenticated %}
+            {% if current_user.is_admin %}
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{ url_for('order') }}">Aufträge</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{ url_for('customer') }}">Kunden</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{ url_for('racket') }}">Schläger</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{ url_for('string') }}">Saite</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if pending_registrations_count > 0 %}notification-dot{% endif %}" href="{{ url_for('pending_registrations') }}">
+                  Registrierungen
+                </a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('my_orders') }}">Meine Aufträge</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav">
+          {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}">Profil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}">Abmelden</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('login') }}">Anmelden</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>

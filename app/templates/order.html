@@ -2,91 +2,86 @@
 
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <strong>{{ message }}</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-{% endfor %}
+<div class="card border-0 shadow-sm mb-4">
+  <h2>Offene Aufträge</h2>
 
-<h2>Offene Aufträge</h2>
-
-<table class="table mt-5 table-hover">
-  <thead>
-      <tr>
-          <th scope="col"> Datum </th>
-          <th scope="col"> Kunde </th>
-          <th scope="col"> Schläger </th>
-          <th scope="col"> Saite </th>
-          <th scope="col"> Längs </th>
-          <th scope="col"> Quer </th>
-          <th scope="col"> Aktion </th>
-      </tr>
-  </thead>
-  <tbody>
-    {% for order in open_orders %}
-        <td> {{ order.date_added|format_datetime }} </td>
-        <td> {{ order.belongs_to.customer.fullname }} </td>
-        <td> {{ order.belongs_to }} </td>
-        <td> 
-          {% if order.hybrid is true %}
-          {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
-          {% else %}
-          {{ order.string_main.fullstring }}
-          {% endif %}
-        </td>
-        <td> {{ order.tension_main }} kg </td>
-        <td> {{ order.tension_main }} kg </td>
-        <td> 
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-success"><a href="{{ url_for('updateDone', id=order.id) }}" class="link-light"><i class="bi bi-check-circle"></i></a></button>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{ order.id }}"><i class="bi bi-trash"></i></button>
-          </div>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <table class="table mt-5 table-hover">
+    <thead>
+        <tr>
+            <th scope="col"> Datum </th>
+            <th scope="col"> Kunde </th>
+            <th scope="col"> Schläger </th>
+            <th scope="col"> Saite </th>
+            <th scope="col"> Längs </th>
+            <th scope="col"> Quer </th>
+            <th scope="col"> Aktion </th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for order in open_orders %}
+          <td> {{ order.date_added|format_datetime }} </td>
+          <td> {{ order.belongs_to.customer.fullname }} </td>
+          <td> {{ order.belongs_to }} </td>
+          <td> 
+            {% if order.hybrid is true %}
+            {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
+            {% else %}
+            {{ order.string_main.fullstring }}
+            {% endif %}
+          </td>
+          <td> {{ order.tension_main }} kg </td>
+          <td> {{ order.tension_main }} kg </td>
+          <td> 
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-success"><a href="{{ url_for('updateDone', id=order.id) }}" class="link-light"><i class="bi bi-check-circle"></i></a></button>
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{ order.id }}"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   
-<h2>Abgeschlossene Aufträge</h2>
+  <h2>Abgeschlossene Aufträge</h2>
 
-<table class="table mt-5 table-hover">
-  <thead>
-      <tr>
-          <th scope="col"> Datum </th>
-          <th scope="col"> Kunde </th>
-          <th scope="col"> Schläger </th>
-          <th scope="col"> Saite </th>
-          <th scope="col"> Längs </th>
-          <th scope="col"> Quer </th>
-          <th scope="col"> Bezahlt </th>
-      </tr>
-  </thead>
-  <tbody>
-    {% for order in orders %}
-        <td> {{ order.date_added|format_datetime }} </td>
-        <td> {{ order.belongs_to.customer.fullname }} </td>
-        <td> {{ order.belongs_to }} </td>
-        <td> 
-          {% if order.hybrid is true %}
-          {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
-          {% else %}
-          {{ order.string_main.fullstring }}
-          {% endif %}
-        </td>
-        <td> {{ order.tension_main }} kg </td>
-        <td> {{ order.tension_main }} kg </td>
-        <td> 
-          {% if order.paid == False %}
-            <button type="button" class="btn btn-primary"><a href="{{ url_for('updatePaid', id=order.id) }}" class="link-light"><i class="bi bi-currency-euro"></i></a></button>
-          {% elif order.paid == True %}
-            <button type="button" class="btn btn-success" disabled><i class="bi bi-currency-euro"></i></button>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <table class="table mt-5 table-hover">
+    <thead>
+        <tr>
+            <th scope="col"> Datum </th>
+            <th scope="col"> Kunde </th>
+            <th scope="col"> Schläger </th>
+            <th scope="col"> Saite </th>
+            <th scope="col"> Längs </th>
+            <th scope="col"> Quer </th>
+            <th scope="col"> Bezahlt </th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+          <td> {{ order.date_added|format_datetime }} </td>
+          <td> {{ order.belongs_to.customer.fullname }} </td>
+          <td> {{ order.belongs_to }} </td>
+          <td> 
+            {% if order.hybrid is true %}
+            {{ order.string_main.fullstring }} / {{ order.string_cross.fullstring }}
+            {% else %}
+            {{ order.string_main.fullstring }}
+            {% endif %}
+          </td>
+          <td> {{ order.tension_main }} kg </td>
+          <td> {{ order.tension_main }} kg </td>
+          <td> 
+            {% if order.paid == False %}
+              <button type="button" class="btn btn-primary"><a href="{{ url_for('updatePaid', id=order.id) }}" class="link-light"><i class="bi bi-currency-euro"></i></a></button>
+            {% elif order.paid == True %}
+              <button type="button" class="btn btn-success" disabled><i class="bi bi-currency-euro"></i></button>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 <!-- Delete Modal HTML -->
 {% for order in open_orders %}

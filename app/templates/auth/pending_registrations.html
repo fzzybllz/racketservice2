@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Ausstehende Registrierungen{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+      <h2 class="m-0 text-white">Ausstehende Registrierungen</h2>
+    </div>
+    <div class="card-body">
+      <div class="modern-table-container">
+        <div class="table-responsive">
+          {% if pending_users %}
+          <table class="table modern-table">
+            <thead>
+              <tr>
+                <th scope="col" class="sortable" data-column="0">Name <i class="sort-icon bi"></i></th>
+                <th scope="col" class="sortable" data-column="1">E-Mail <i class="sort-icon bi"></i></th>
+                <th scope="col" class="sortable" data-column="2">Registriert am <i class="sort-icon bi"></i></th>
+                <th scope="col">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in pending_users %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="table-icon">
+                        <i class="bi bi-person text-white"></i>
+                      </div>
+                      <span class="fw-semibold">{{ user.customer.firstname }} {{ user.customer.lastname }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="mailto:{{ user.email }}" class="text-decoration-none" onclick="event.stopPropagation();">
+                      <i class="bi bi-envelope me-1"></i>{{ user.email }}
+                    </a>
+                  </td>
+                  <td>{{ user.date_added|format_datetime('short') }}</td>
+                  <td>
+                    <form method="POST" action="{{ url_for('approve_registration', user_id=user.id) }}" class="d-inline" onclick="event.stopPropagation();">
+                      <button type="submit" class="btn btn-success btn-sm me-2">Genehmigen</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('reject_registration', user_id=user.id) }}" class="d-inline" onclick="event.stopPropagation();">
+                      <button type="submit" class="btn btn-danger btn-sm">Ablehnen</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="modern-table-empty">
+            <i class="bi bi-people"></i>
+            <h3>Keine ausstehenden Registrierungen</h3>
+            <p>Es gibt derzeit keine Registrierungen, die auf Genehmigung warten.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, SelectField, BooleanField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, InputRequired, Email, EqualTo, Length, NoneOf, Optional, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
-from app.models import Rackets, Customers, RacketOwnership, String
+from app.models import Rackets, Customers, RacketOwnership, String, User
 
 class CustomerForm(FlaskForm):
     firstname = StringField('Vorname', validators=[InputRequired(message='Pflichtfeld')])
@@ -89,6 +89,43 @@ class SignupForm(FlaskForm):
     submit = SubmitField('Registrieren')
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[InputRequired()])
-    password = PasswordField('Passwort', validators=[InputRequired()])
-    submit = SubmitField('Login')
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Weiter')
+
+class RegistrationForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    firstname = StringField('First Name', validators=[DataRequired()])
+    lastname = StringField('Last Name', validators=[DataRequired()])
+    street = StringField('Street')
+    plz = StringField('Postal Code')
+    city = StringField('City')
+    phone = StringField('Phone')
+    submit = SubmitField('Register')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different email address.')
+
+class ProfileForm(FlaskForm):
+    firstname = StringField('First Name', validators=[DataRequired()])
+    lastname = StringField('Last Name', validators=[DataRequired()])
+    street = StringField('Street')
+    plz = StringField('Postal Code')
+    city = StringField('City')
+    phone = StringField('Phone')
+    submit = SubmitField('Update Profile')
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Change Password')
+
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Passwort zurücksetzen')

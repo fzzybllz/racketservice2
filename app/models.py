@@ -1,5 +1,28 @@
 from app import db
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from sqlalchemy import func, text, String
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256))
+    is_admin = db.Column(db.Boolean, default=False)
+    is_approved = db.Column(db.Boolean, default=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
+    customer = db.relationship('Customers', backref='user', uselist=False)
+    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return f'<User {self.email}>'
 
 class Customers(db.Model):
     __tablename__ = 'customers'
@@ -14,7 +37,7 @@ class Customers(db.Model):
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
     #has_racket = db.relationship('Rackets', secondary='racket_ownerships', backref='owned_by') # <- Circular relation
     # Virtual Helper Column
-    fullname = db.column_property(lastname + ", " + firstname)
+    fullname = db.column_property(db.cast(lastname, String) + ', ' + db.cast(firstname, String))
 
     def __repr__(self):
         return f'{self.firstname} {self.lastname}>'
@@ -30,7 +53,7 @@ class Rackets(db.Model):
     note = db.Column(db.String)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
     # Virtual Helper Column
-    fullracket = db.column_property(manufacturer + " " + model + " " + template)
+    fullracket = db.column_property(text("manufacturer || ' ' || model || ' ' || template"))
 #    owned_by = db.relationship('CustomerRacket', back_populates='customers') # <- Circular relation
 
     def __repr__(self):
@@ -63,7 +86,7 @@ class String(db.Model):
     consumption = db.Column(db.String(5))
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
     # Virtual Helper Column
-    fullstring = db.column_property(manufacturer + " " + model + " " + "(" + gauge + "mm)")
+    fullstring = db.column_property(text("manufacturer || ' ' || model || ' (' || gauge || 'mm)'"))
 
 class Order(db.Model):
     __tablename__ = 'orders'
