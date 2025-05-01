@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, BooleanField, SubmitField, IntegerField, FloatField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, InputRequired, Email, EqualTo, Length, NoneOf, Optional, ValidationError
 from wtforms_sqlalchemy.fields import QuerySelectField
-from app.models import Rackets, Customers, RacketOwnership, String, User
+from app.models import Rackets, Customers, RacketOwnership, String
 
 class CustomerForm(FlaskForm):
     firstname = StringField('Vorname', validators=[InputRequired(message='Pflichtfeld')])
@@ -12,7 +12,14 @@ class CustomerForm(FlaskForm):
     city = StringField('Stadt')
     phone = StringField('Telefon')
     email = StringField('Email', validators=[InputRequired(message='Pflichtfeld'), Email(message='eMail ist ungültig')])
+    password = PasswordField('Passwort', validators=[DataRequired(), Length(min=8, message='Passwort zu kurz')])
+    is_admin = BooleanField('Administrator')
     submit = SubmitField('Kunde anlegen')
+
+    def validate_email(self, email):
+        customer = Customers.query.filter_by(email=email.data).first()
+        if customer is not None:
+            raise ValidationError('Diese E-Mail-Adresse wird bereits verwendet.')
 
 class RacketForm(FlaskForm):
     manufacturer = StringField('Hersteller', validators=[InputRequired()])
@@ -97,7 +104,6 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
     street = StringField('Street')
@@ -125,7 +131,3 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=8)])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Change Password')
-
-class ForgotPasswordForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Passwort zurücksetzen')

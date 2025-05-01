@@ -4,15 +4,18 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy import func, text, String
 
-class User(UserMixin, db.Model):
-    __tablename__ = 'users'
+class Customers(UserMixin, db.Model):
+    __tablename__ = 'customers'
     id = db.Column(db.Integer, primary_key=True)
+    firstname = db.Column(db.String(100))
+    lastname = db.Column(db.String(100))
+    street = db.Column(db.String(100))
+    plz = db.Column(db.String(10))
+    city = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
     email = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
     is_admin = db.Column(db.Boolean, default=False)
-    is_approved = db.Column(db.Boolean, default=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
-    customer = db.relationship('Customers', backref='user', uselist=False)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def set_password(self, password):
@@ -21,26 +24,12 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def __repr__(self):
-        return f'<User {self.email}>'
-
-class Customers(db.Model):
-    __tablename__ = 'customers'
-    id = db.Column(db.Integer, primary_key=True)
-    firstname = db.Column(db.String(100), nullable=False)
-    lastname = db.Column(db.String(100), nullable=False)
-    street = db.Column(db.String(100))
-    plz = db.Column(db.String(5))
-    city = db.Column(db.String(100))
-    phone = db.Column(db.String(100))
-    email = db.Column(db.String(100), unique=True)
-    date_added = db.Column(db.DateTime(), default=datetime.utcnow)
-    #has_racket = db.relationship('Rackets', secondary='racket_ownerships', backref='owned_by') # <- Circular relation
-    # Virtual Helper Column
-    fullname = db.column_property(db.cast(lastname, String) + ', ' + db.cast(firstname, String))
+    @property
+    def fullname(self):
+        return f"{self.firstname} {self.lastname}"
 
     def __repr__(self):
-        return f'{self.firstname} {self.lastname}>'
+        return f'<Customer {self.email}>'
 
 class Rackets(db.Model):
     __tablename__ = 'rackets'
@@ -53,7 +42,7 @@ class Rackets(db.Model):
     note = db.Column(db.String)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
     # Virtual Helper Column
-    fullracket = db.column_property(text("manufacturer || ' ' || model || ' ' || template"))
+    fullracket = db.column_property(db.cast(manufacturer, String) + ' ' + db.cast(model, String) + ' ' + db.cast(template, String))
 #    owned_by = db.relationship('CustomerRacket', back_populates='customers') # <- Circular relation
 
     def __repr__(self):
@@ -86,7 +75,7 @@ class String(db.Model):
     consumption = db.Column(db.String(5))
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
     # Virtual Helper Column
-    fullstring = db.column_property(text("manufacturer || ' ' || model || ' (' || gauge || 'mm)'"))
+    fullstring = db.column_property(db.cast(manufacturer, String) + ' ' + db.cast(model, String) + ' (' + db.cast(gauge, String) + 'mm)')
 
 class Order(db.Model):
     __tablename__ = 'orders'

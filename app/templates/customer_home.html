@@ -2,18 +2,18 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Willkommen, {{ current_user.customer.firstname }}!</h1>
+    <h1>Willkommen, {{ current_user.firstname }}!</h1>
     
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Mein Profil</h5>
+                    <h5 class="card-title mb-0">Meine Daten</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> {{ current_user.customer.firstname }} {{ current_user.customer.lastname }}</p>
-                    <p><strong>E-Mail:</strong> {{ current_user.customer.email }}</p>
-                    <p><strong>Telefon:</strong> {{ current_user.customer.phone }}</p>
+                    <p><strong>Name:</strong> {{ current_user.firstname }} {{ current_user.lastname }}</p>
+                    <p><strong>E-Mail:</strong> {{ current_user.email }}</p>
+                    <p><strong>Telefon:</strong> {{ current_user.phone }}</p>
                     <a href="{{ url_for('profile') }}" class="btn btn-primary">Profil bearbeiten</a>
                 </div>
             </div>
@@ -25,19 +25,19 @@
                     <h5 class="card-title mb-0">Meine Schläger</h5>
                 </div>
                 <div class="card-body">
-                    {% if current_user.customer.racket_ownerships %}
+                    {% if current_user.racket_ownerships %}
                         <ul class="list-group">
-                            {% for ownership in current_user.customer.racket_ownerships %}
+                        {% for ownership in current_user.racket_ownerships %}
                             <li class="list-group-item">
                                 {{ ownership.racket.manufacturer }} {{ ownership.racket.model }}
                                 {% if ownership.uid %}
-                                ({{ ownership.uid }})
+                                    <br><small class="text-muted">UID: {{ ownership.uid }}</small>
                                 {% endif %}
                             </li>
-                            {% endfor %}
+                        {% endfor %}
                         </ul>
                     {% else %}
-                        <p>Noch keine Schläger registriert.</p>
+                        <p>Du hast noch keine Schläger registriert.</p>
                     {% endif %}
                 </div>
             </div>

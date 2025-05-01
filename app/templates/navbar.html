@@ -20,11 +20,6 @@
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="{{ url_for('string') }}">Saite</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link {% if pending_registrations_count > 0 %}notification-dot{% endif %}" href="{{ url_for('pending_registrations') }}">
-                  Registrierungen
-                </a>
-              </li>
             {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('my_orders') }}">Meine Aufträge</a>
@@ -43,9 +38,6 @@
           {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('login') }}">Anmelden</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
             </li>
           {% endif %}
         </ul>
