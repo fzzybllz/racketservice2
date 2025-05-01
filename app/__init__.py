@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
 from config import Config
 from app.extensions import db
 from flask_migrate import Migrate
@@ -10,7 +10,7 @@ from sqlalchemy import desc
 
 # Import models after db is initialized
 from app.models import Customers, Rackets, RacketOwnership, String, Order
-from app.forms import CustomerForm, RacketForm, StringForm, OrderForm, LoginForm, ProfileForm, ChangePasswordForm
+from app.forms import CustomerForm, RacketForm, StringForm, OrderForm, LoginForm, ProfileForm, ChangePasswordForm, CustomerRacketForm
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -126,6 +126,8 @@ def create_app(config_class=Config):
         return render_template('customer_add.html', form=form)
 
     @app.route('/customer/<int:customer_id>', methods=['GET', 'POST'])
+    @login_required
+    @admin_required
     def customer_detail(customer_id):
         customer = Customers.query.filter_by(id=customer_id).first_or_404()
         rackets_owned = RacketOwnership.query.filter_by(customers_id=customer_id).all()
@@ -148,7 +150,6 @@ def create_app(config_class=Config):
                                 cform=cform,
                                 rform=rform,
                                 crform=crform)
-
 
     @app.route('/racket', methods=['GET', 'POST'])
     @login_required
