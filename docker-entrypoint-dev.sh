@@ -7,6 +7,7 @@ POSTGRES_PORT=5432
 POSTGRES_HOST=db
 
 echo "Development mode: Hot reloading enabled"
+
 echo "Waiting for PostgreSQL to become available..."
 echo "Host: $POSTGRES_HOST, Port: $POSTGRES_PORT"
 

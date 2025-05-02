@@ -1,4 +1,5 @@
 import os
+import time
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
 from config import Config
 from app.extensions import db
@@ -7,10 +8,32 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from urllib.parse import urlparse
 import babel
 from sqlalchemy import desc
+from flask_mail import Mail
+from sqlalchemy.exc import OperationalError
+from dotenv import load_dotenv
 
 # Import models after db is initialized
 from app.models import Customers, Rackets, RacketOwnership, String, Order
-from app.forms import CustomerForm, RacketForm, StringForm, OrderForm, LoginForm, ProfileForm, ChangePasswordForm, CustomerRacketForm
+from app.forms import CustomerForm, RacketForm, StringForm, OrderForm, LoginForm, ProfileForm, ChangePasswordForm, CustomerRacketForm, ResetPasswordRequestForm, ResetPasswordForm
+
+# Initialize Flask extensions
+db = db
+mail = Mail()
+
+def wait_for_db(app, max_retries=5, retry_interval=2):
+    """Wait for the database to be ready before proceeding."""
+    for i in range(max_retries):
+        try:
+            with app.app_context():
+                db.engine.connect()
+            return True
+        except OperationalError:
+            if i < max_retries - 1:
+                print(f"Database not ready. Retrying in {retry_interval} seconds...")
+                time.sleep(retry_interval)
+            else:
+                print("Could not connect to database after maximum retries.")
+                return False
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -18,7 +41,27 @@ def create_app(config_class=Config):
 
     # Initialize Flask extensions here
     db.init_app(app)
+    
+    # Configure Flask-Mail
+    # Load environment variables from .env file
+    load_dotenv()
+    
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', '587'))
+    app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
+    app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False').lower() == 'true'
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', 'technik.schlumberger@gmail.com')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', 'ovzj sfww kvni irko')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'technik.schlumberger@gmail.com')
+    
+    # Initialize mail after configuration
+    mail.init_app(app)
+    
     migrate = Migrate(app, db)
+
+    # Wait for database to be ready
+    if not wait_for_db(app):
+        raise Exception("Could not connect to database")
 
     login = LoginManager(app)
     login.login_view = 'login'
@@ -39,8 +82,8 @@ def create_app(config_class=Config):
 
     def create_default_admin():
         with app.app_context():
-            # Check if any admin exists
-            admin_exists = Customers.query.filter_by(is_admin=True).first()
+            # Check if any admin exists - only query essential fields
+            admin_exists = db.session.query(Customers.id).filter_by(is_admin=True).first()
             if not admin_exists:
                 # Create default admin user
                 admin = Customers(
@@ -54,8 +97,12 @@ def create_app(config_class=Config):
                 db.session.commit()
                 print('Default admin user created with email: admin@racketservice.com and password: admin123')
 
-    # Create default admin on first run
-    create_default_admin()
+    # Create default admin after migrations
+    with app.app_context():
+        from flask_migrate import upgrade
+        print("Running database migrations...")
+        upgrade()
+        create_default_admin()
 
     # Register blueprints here
     @app.route('/')
@@ -444,5 +491,37 @@ def create_app(config_class=Config):
         elif value is None:
             new_val=""
         return new_val
+
+    @app.route('/reset_password_request', methods=['GET', 'POST'])
+    def reset_password_request():
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        form = ResetPasswordRequestForm()
+        if form.validate_on_submit():
+            customer = Customers.query.filter_by(email=form.email.data).first()
+            if customer:
+                from app.email import send_password_reset_email
+                send_password_reset_email(customer)
+            flash('Eine E-Mail mit Anweisungen zum Zurücksetzen des Passworts wurde gesendet.', 'info')
+            return redirect(url_for('login'))
+        return render_template('auth/reset_password_request.html', title='Reset Password', form=form)
+
+    @app.route('/reset_password/<token>', methods=['GET', 'POST'])
+    def reset_password(token):
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        customer = Customers.verify_reset_token(token)
+        if not customer:
+            flash('Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.', 'warning')
+            return redirect(url_for('reset_password_request'))
+        form = ResetPasswordForm()
+        if form.validate_on_submit():
+            customer.set_password(form.password.data)
+            customer.reset_token = None
+            customer.reset_token_expiration = None
+            db.session.commit()
+            flash('Ihr Passwort wurde zurückgesetzt.', 'success')
+            return redirect(url_for('login'))
+        return render_template('auth/reset_password.html', form=form)
 
     return app

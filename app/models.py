@@ -1,8 +1,9 @@
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy import func, text, String
+import secrets
 
 class Customers(UserMixin, db.Model):
     __tablename__ = 'customers'
@@ -17,12 +18,27 @@ class Customers(UserMixin, db.Model):
     password_hash = db.Column(db.String(256))
     is_admin = db.Column(db.Boolean, default=False)
     date_added = db.Column(db.DateTime(), default=datetime.utcnow)
+    reset_token = db.Column(db.String(100), unique=True)
+    reset_token_expiration = db.Column(db.DateTime)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_reset_token(self, expires_in=3600):
+        token = secrets.token_urlsafe(32)
+        self.reset_token = token
+        self.reset_token_expiration = datetime.utcnow() + timedelta(seconds=expires_in)
+        db.session.commit()
+        return token
+
+    def verify_reset_token(token):
+        customer = Customers.query.filter_by(reset_token=token).first()
+        if customer is None or customer.reset_token_expiration < datetime.utcnow():
+            return None
+        return customer
 
     @property
     def fullname(self):

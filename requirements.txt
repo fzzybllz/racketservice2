@@ -9,6 +9,7 @@ email-validator==2.1.0.post1
 filelock==3.7.1
 flash==1.0.3
 Flask==3.0.2
+Flask-Mail==0.9.1
 Flask-Migrate==4.0.5
 Flask-Script==2.0.6
 Flask-Session==0.4.0
